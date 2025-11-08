@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+ <html lang="zh-CN">
+ <head>
+     <meta charset="UTF-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+     <title>TECH·G | Python 项目合集</title>
+     <style>
+         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+         html, body { height: 100%; overflow-x: hidden; }
+         body { background: #000; color: #f5f5f5; position: relative; }
+         
+         /* 无导航栏，仅保留返回按钮 */
+         .back-container { 
+             padding: clamp(20px, 4vw, 24px) clamp(16px, 5vw, 40px); 
+             text-align: left; 
+         }
+         .back-btn { 
+             padding: clamp(6px, 1.5vw, 8px) clamp(16px, 2vw, 20px); 
+             background: rgba(34, 197, 94, 0.1); color: #22c55e; 
+             text-decoration: none; border-radius: 4px; transition: all 0.3s ease; 
+             font-size: clamp(12px, 1.8vw, 14px); 
+             display: inline-block; 
+         }
+         .back-btn:hover { 
+             background: rgba(34, 197, 94, 0.2); transform: translateY(-2px); 
+         }
+         
+         /* 项目合集区域 */
+         .python-projects-section { 
+             width: 100%; padding: clamp(20px, 5vw, 40px) clamp(16px, 5vw, 40px); 
+             min-height: calc(100vh - 120px); background: #050505; 
+         }
+         .section-title { 
+             font-size: clamp(20px, 5vw, 28px); margin-bottom: clamp(30px, 6vw, 40px); 
+             color: #f97316; text-align: center; position: relative; 
+         }
+         .section-title::after { 
+             content: ''; display: block; width: clamp(60px, 15vw, 80px); height: 2px; 
+             background: #f97316; margin: 16px auto 0; 
+         }
+         
+         /* 项目卡片容器 */
+         .projects-container { 
+             display: grid; grid-template-columns: repeat(auto-fit, minmax(clamp(280px, 100%, 350px), 1fr)); 
+             gap: clamp(20px, 4vw, 30px); max-width: 1200px; margin: 0 auto; 
+         }
+         
+         /* 项目卡片样式（仅按钮可点击） */
+         .project-card { 
+             background: rgba(10, 10, 10, 0.8); border-radius: 8px; 
+             padding: clamp(20px, 4vw, 24px); border: 1px solid rgba(249, 115, 22, 0.1); 
+             transition: all 0.3s ease; height: 100%; display: flex; flex-direction: column; 
+             border-left: 3px solid #f97316; /* 无整体指针样式，仅按钮可点击 */
+         }
+         .project-card:hover { 
+             border-color: #f97316; transform: translateY(-5px); 
+             box-shadow: 0 8px 15px rgba(249, 115, 22, 0.08); 
+         }
+         
+         .project-title { 
+             font-size: clamp(16px, 3vw, 18px); color: #fff; margin-bottom: clamp(10px, 2vw, 12px); 
+         }
+         
+         .project-desc { 
+             font-size: clamp(12px, 1.8vw, 13px); color: #aaa; line-height: 1.6; 
+             margin-bottom: clamp(16px, 3vw, 20px); flex-grow: 1; 
+         }
+         
+         .project-tech { 
+             display: flex; flex-wrap: wrap; gap: clamp(6px, 1vw, 8px); 
+             margin-bottom: clamp(16px, 2vw, 20px); 
+         }
+         .tech-badge { 
+             padding: clamp(4px, 1vw, 6px) clamp(8px, 1.5vw, 10px); 
+             border-radius: 4px; font-size: clamp(10px, 1.5vw, 11px); 
+             background: rgba(249, 115, 22, 0.1); color: #f97316; 
+         }
+         
+         /* 查看详情按钮 */
+         .view-detail-btn { 
+             display: inline-block; 
+             padding: clamp(6px, 1.5vw, 8px) clamp(16px, 2vw, 20px); 
+             background: rgba(34, 197, 94, 0.1); color: #22c55e; 
+             text-decoration: none; border-radius: 4px; transition: all 0.3s ease; 
+             font-size: clamp(12px, 1.8vw, 13px); 
+             margin-top: auto; /* 固定在卡片底部 */
+             align-self: flex-start; /* 左对齐 */
+             cursor: pointer;
+         }
+         .view-detail-btn:hover { 
+             background: rgba(34, 197, 94, 0.2); transform: translateY(-2px); 
+         }
+         
+         /* 页脚 */
+         .footer { 
+             width: 100%; padding: clamp(16px, 3vw, 20px) 0; 
+             text-align: center; color: #888; font-size: clamp(11px, 2vw, 12px); 
+             background: rgba(0, 0, 0, 0.9); border-top: 1px solid rgba(34, 197, 94, 0.1);
+         }
+         
+         /* 小屏适配 */
+         @media (max-width: 375px) {
+             .project-card { padding: 16px; }
+             .section-title { font-size: 22px; }
+             .view-detail-btn { width: 100%; text-align: center; }
+         }
+     </style>
+ </head>
+ <body>
+     <!-- 仅保留返回按钮（退出到项目页面） -->
+     <div class="back-container">
+         <a href="projects.html" class="back-btn">退出到项目页面</a>
+     </div>
+     <section class="python-projects-section">
+         <h2 class="section-title">Python 项目合集</h2>
+         <div class="projects-container">
+             <!-- 项目1：仅查看详情按钮可跳转 -->
+             <div class="project-card">
+                 <h3 class="project-title">数据可视化分析工具</h3>
+                 <p class="project-desc">基于 Pandas + Matplotlib 开发的数据分析工具，支持 CSV/Excel 文件导入、数据清洗、多维度可视化图表生成，导出分析报告。</p>
+                 <div class="project-tech">
+                     <span class="tech-badge">Python</span>
+                     <span class="tech-badge">Pandas</span>
+                     <span class="tech-badge">Matplotlib</span>
+                 </div>
+                 <a href="python-data-visualization.html" class="view-detail-btn">查看详情</a>
+             </div>
+             
+             <!-- 项目2：仅查看详情按钮可跳转 -->
+             <div class="project-card">
+                 <h3 class="project-title">邮件自动发送脚本</h3>
+                 <p class="project-desc">支持批量发送个性化邮件的 Python 脚本，集成 SMTP 协议，支持附件上传、HTML 邮件模板、发送状态日志记录。</p>
+                 <div class="project-tech">
+                     <span class="tech-badge">Python</span>
+                     <span class="tech-badge">smtplib</span>
+                     <span class="tech-badge">email</span>
+                 </div>
+                 <a href="python-email-sender.html" class="view-detail-btn">查看详情</a>
+             </div>
+             
+             <!-- 项目3：仅查看详情按钮可跳转 -->
+             <div class="project-card">
+                 <h3 class="project-title">网页数据爬虫</h3>
+                 <p class="project-desc">使用 BeautifulSoup + Requests 开发的通用爬虫工具，支持自定义爬取规则、数据去重、CSV/JSON 格式导出，含反爬机制。</p>
+                 <div class="project-tech">
+                     <span class="tech-badge">Python</span>
+                     <span class="tech-badge">Requests</span>
+                     <span class="tech-badge">BeautifulSoup4</span>
+                 </div>
+                 <a href="python-web-scraper.html" class="view-detail-btn">查看详情</a>
+             </div>
+             
+             <!-- 项目4：仅查看详情按钮可跳转 -->
+             <div class="project-card">
+                 <h3 class="project-title">全栈任务管理系统</h3>
+                 <p class="project-desc">前端 HTML/CSS/JS + 后端 Flask 框架，支持用户注册登录、任务增删改查、优先级排序、截止日期提醒。</p>
+                 <div class="project-tech">
+                     <span class="tech-badge">Python</span>
+                     <span class="tech-badge">Flask</span>
+                     <span class="tech-badge">SQLite</span>
+                 </div>
+                 <a href="python-todo-app.html" class="view-detail-btn">查看详情</a>
+             </div>
+             
+             <!-- 项目5：仅查看详情按钮可跳转 -->
+             <div class="project-card">
+                 <h3 class="project-title">密码生成与管理工具</h3>
+                 <p class="project-desc">支持随机生成高强度密码，本地加密存储，密码分类管理、模糊搜索，保护个人信息安全。</p>
+                 <div class="project-tech">
+                     <span class="tech-badge">Python</span>
+                     <span class="tech-badge">cryptography</span>
+                     <span class="tech-badge">JSON</span>
+                 </div>
+                 <a href="python-password-tool.html" class="view-detail-btn">查看详情</a>
+             </div>
+             
+             <!-- 项目6：仅查看详情按钮可跳转 -->
+             <div class="project-card">
+                 <h3 class="project-title">图片批量处理工具</h3>
+                 <p class="project-desc">支持图片格式转换、尺寸压缩、水印添加、灰度处理的批量工具，自定义压缩比例和水印参数。</p>
+                 <div class="project-tech">
+                     <span class="tech-badge">Python</span>
+                     <span class="tech-badge">Pillow</span>
+                     <span class="tech-badge">os</span>
+                 </div>
+                 <a href="python-image-processor.html" class="view-detail-btn">查看详情</a>
+             </div>
+         </div>
+     </section>
+     <footer class="footer">
+         <p>© 2025 TECH·G | 极简黑绿科技风</p>
+     </footer>
+ </body>
+ </html>

@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+ <html lang="zh-CN">
+ <head>
+     <meta charset="UTF-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+     <title>TECH·G | 网页数据爬虫 - 示例代码</title>
+     <style>
+         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+         html, body { height: 100%; overflow-x: hidden; background: #000; color: #f5f5f5; }
+         
+         /* 返回按钮 */
+         .back-container { padding: clamp(20px, 4vw, 24px) clamp(16px, 5vw, 40px); text-align: left; }
+         .back-btn { 
+             padding: clamp(6px, 1.5vw, 8px) clamp(16px, 2vw, 20px); 
+             background: rgba(249, 115, 22, 0.1); color: #f97316; 
+             text-decoration: none; border-radius: 4px; transition: all 0.3s ease; 
+             font-size: clamp(12px, 1.8vw, 14px); display: inline-block; 
+         }
+         .back-btn:hover { background: rgba(249, 115, 22, 0.2); transform: translateY(-2px); }
+         
+         /* 代码区域 */
+         .code-section { 
+             width: 100%; padding: clamp(20px, 5vw, 40px) clamp(16px, 5vw, 40px); 
+             max-width: 1200px; margin: 0 auto; min-height: calc(100vh - 120px); 
+         }
+         .code-title { 
+             font-size: clamp(18px, 3vw, 22px); color: #fff; margin-bottom: clamp(20px, 4vw, 30px); 
+             position: relative; display: inline-block; 
+         }
+         .code-title::after { 
+             content: ''; display: block; width: clamp(50px, 10vw, 50px); height: 2px; 
+             background: #22c55e; margin: 8px 0 0; 
+         }
+         .code-description { 
+             font-size: clamp(13px, 2vw, 15px); color: #aaa; line-height: 1.6; 
+             margin-bottom: clamp(20px, 3vw, 24px); 
+         }
+         .code-card { 
+             background: #0a0a0a; border-radius: 8px; padding: clamp(20px, 3vw, 24px); 
+             position: relative; border: 1px solid rgba(34, 197, 94, 0.1); 
+         }
+         .copy-btn { 
+             position: absolute; top: clamp(16px, 2vw, 20px); right: clamp(16px, 2vw, 20px); 
+             padding: clamp(4px, 1vw, 6px) clamp(12px, 1.5vw, 16px); 
+             background: rgba(34, 197, 94, 0.1); color: #22c55e; 
+             border: none; border-radius: 4px; font-size: clamp(11px, 1.5vw, 12px); 
+             cursor: pointer; transition: all 0.3s ease; 
+             z-index: 10;
+         }
+         .copy-btn:hover { background: rgba(34, 197, 94, 0.2); }
+         .copy-success { 
+             position: absolute; top: clamp(16px, 2vw, 20px); right: clamp(100px, 10vw, 120px); 
+             color: #22c55e; font-size: clamp(11px, 1.5vw, 12px); 
+             background: rgba(34, 197, 94, 0.1); padding: clamp(4px, 1vw, 6px) clamp(12px, 1.5vw, 16px); 
+             border-radius: 4px; border: 1px solid rgba(34, 197, 94, 0.3);
+             display: none; opacity: 0; transition: opacity 0.3s ease;
+             z-index: 10;
+         }
+         .copy-success.show { 
+             display: inline-block; opacity: 1; 
+             animation: fadeInOut 1.5s ease-in-out;
+         }
+         @keyframes fadeInOut {
+             0% { opacity: 0; transform: translateY(5px); }
+             20% { opacity: 1; transform: translateY(0); }
+             80% { opacity: 1; transform: translateY(0); }
+             100% { opacity: 0; transform: translateY(5px); }
+         }
+         pre { 
+             white-space: pre-wrap; word-break: break-all; overflow-x: auto; 
+             font-size: clamp(12px, 1.8vw, 14px); line-height: 1.6; 
+             padding-top: clamp(8px, 1vw, 10px);
+         }
+         code { color: #d1d5db; }
+         .keyword { color: #c084fc; }
+         .string { color: #facc15; }
+         .comment { color: #6b7280; }
+         .function { color: #38bdf8; }
+         .variable { color: #a78bfa; }
+         .number { color: #f87171; }
+         
+         /* 页脚 */
+         .footer { 
+             width: 100%; padding: clamp(16px, 3vw, 20px) 0; 
+             text-align: center; color: #888; font-size: clamp(11px, 2vw, 12px); 
+             background: rgba(0, 0, 0, 0.9); border-top: 1px solid rgba(34, 197, 94, 0.1);
+         }
+     </style>
+ </head>
+ <body>
+     <div class="back-container">
+         <a href="python-web-scraper.html" class="back-btn">返回功能详情</a>
+     </div>
+     <section class="code-section">
+         <h1 class="code-title">网页数据爬虫 - 核心示例代码</h1>
+         <p class="code-description">以下是支持多页面爬取、反爬机制和 CSV 导出的核心代码，以爬取电商商品数据为例：</p>
+         
+         <div class="code-card">
+             <button class="copy-btn" onclick="copyCode(this)">复制代码</button>
+             <span class="copy-success">复制成功！</span>
+             <pre><code><span class="keyword">import</span> requests
+ <span class="keyword">from</span> bs4 <span class="keyword">import</span> BeautifulSoup
+ <span class="keyword">import</span> csv
+ <span class="keyword">import</span> random
+ <span class="keyword">import</span> time
+ <span class="keyword">from</span> concurrent.futures <span class="keyword">import</span> ThreadPoolExecutor, as_completed
+ <span class="keyword">import</span> logging
+ <span class="keyword">import</span> json
+ <span class="comment"># 配置日志</span>
+ logging.basicConfig(
+     filename=<span class="string">'scraper_log.log'</span>,
+     level=logging.INFO,
+     format=<span class="string">'%(asctime)s - %(levelname)s - %(message)s'</span>,
+     encoding=<span class="string">'utf-8'</span>
+ )
+ <span class="comment"># 反爬配置 - 随机 User-Agent</span>
+ USER_AGENTS = [
+     <span class="string">'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'</span>,
+     <span class="string">'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36'</span>,
+     <span class="string">'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Edge/18.18363'</span>
+ ]<span class="comment"># 读取爬取配置</span>
+ <span class="keyword">def</span> <span class="function">load_config</span>(config_path):
+     <span class="keyword">with</span> open(config_path, <span class="string">'r'</span>, encoding=<span class="string">'utf-8'</span>) <span class="keyword">as</span> f:
+         <span class="keyword">return</span> json.load(f)
+ <span class="comment"># 获取页面响应（带反爬机制）</span>
+ <span class="keyword">def</span> <span class="function">get_page_response</span>(url, proxies=None):
+     headers = {
+         <span class="string">'User-Agent'</span>: random.choice(USER_AGENTS),
+         <span class="string">'Accept'</span>: <span class="string">'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'</span>,
+         <span class="string">'Referer'</span>: url
+     }
+     <span class="keyword">try</span>:
+         response = requests.get(
+             url, 
+             headers=headers, 
+             proxies=proxies, 
+             timeout=10, 
+             allow_redirects=<span class="keyword">False</span>
+         )
+         response.raise_for_status()  <span class="comment"># 抛出 HTTP 错误</span>
+         response.encoding = response.apparent_encoding
+         time.sleep(random.uniform(0.5, 2))  <span class="comment"># 随机延迟</span>
+         <span class="keyword">return</span> response.text
+     <span class="keyword">except</span> Exception <span class="keyword">as</span> e:
+         logging.error(<span class="string">f"获取页面失败 {url}：{str(e)}"</span>)
+         <span class="keyword">return</span> <span class="keyword">None</span>
+ <span class="comment"># 解析商品数据</span>
+ <span class="keyword">def</span> <span class="function">parse_product_data</span>(html, config):
+     soup = BeautifulSoup(html, <span class="string">'html.parser'</span>)
+     products = []
+     <span class="comment"># 查找所有商品卡片</span>
+     product_cards = soup.select(config[<span class="string">'product_card_selector'</span>])
+     
+     <span class="keyword">for</span> card <span class="keyword">in</span> product_cards:
+         product = {}
+         <span class="comment"># 按配置提取字段</span>
+         <span class="keyword">for</span> field, selector <span class="keyword">in</span> config[<span class="string">'fields'</span>].items():
+             element = card.select_one(selector)
+             product[field] = element.get_text(strip=<span class="keyword">True</span>) <span class="keyword">if</span> element <span class="keyword">else</span> <span class="string">''</span>
+             <span class="comment"># 提取商品链接</span>
+         link_element = card.select_one(config[<span class="string">'link_selector'</span>])
+         product[<span class="string">'link'</span>] = link_element.get(<span class="string">'href'</span>) <span class="keyword">if</span> link_element <span class="keyword">else</span> <span class="string">''</span>
+         
+         <span class="keyword">if</span> product[config[<span class="string">'primary_key'</span>]]:  <span class="comment"># 过滤空数据</span>
+             products.append(product)
+     
+     <span class="keyword">return</span> products
+ <span class="comment"># 保存数据到 CSV</span>
+ <span class="keyword">def</span> <span class="function">save_to_csv</span>(data, save_path):
+     <span class="keyword">if</span> <span class="keyword">not</span> data:
+         logging.warning(<span class="string">"无数据可保存"</span>)
+         <span class="keyword">return</span>
+     
+     <span class="keyword">with</span> open(save_path, <span class="string">'w'</span>, newline=<span class="string">''</span>, encoding=<span class="string">'utf-8-sig'</span>) <span class="keyword">as</span> f:
+         writer = csv.DictWriter(f, fieldnames=data[0].keys())
+         writer.writeheader()
+         writer.writerows(data)
+     logging.info(<span class="string">f"数据已保存至：{save_path}"</span>)
+ <span class="comment"># 单页面爬取</span>
+ <span class="keyword">def</span> <span class="function">scrape_single_page</span>(url, config, proxies=None):
+     html = get_page_response(url, proxies)
+     <span class="keyword">if</span> <span class="keyword">not</span> html:
+         <span class="keyword">return</span> []
+     <span class="keyword">return</span> parse_product_data(html, config)
+ <span class="comment"># 多页面批量爬取（多线程）</span>
+ <span class="keyword">def</span> <span class="function">scrape_batch_pages</span>(base_url, page_count, config, proxies=None, max_workers=<span class="number">5</span>):
+     all_products = []
+     urls = [base_url.format(page=i) <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">1</span>, page_count + <span class="number">1</span>)]
+     
+     <span class="keyword">with</span> ThreadPoolExecutor(max_workers=max_workers) <span class="keyword">as</span> executor:
+         <span class="comment"># 提交所有任务</span>
+         future_to_url = {
+             executor.submit(scrape_single_page, url, config, proxies): url <span class="keyword">for</span> url <span class="keyword">in</span> urls
+         }
+         
+         <span class="comment"># 处理结果</span>
+         <span class="keyword">for</span> future <span class="keyword">in</span> as_completed(future_to_url):
+             url = future_to_url[future]
+             <span class="keyword">try</span>:
+                 products = future.result()
+                 all_products.extend(products)
+                 logging.info(<span class="string">f"成功爬取 {url}，获取 {len(products)} 条数据"</span>)
+             <span class="keyword">except</span> Exception <span class="keyword">as</span> e:
+                 logging.error(<span class="string">f"爬取 {url} 异常：{str(e)}"</span>)
+     
+     <span class="comment"># 数据去重</span>
+     unique_products = list({p[config[<span class="string">'primary_key'</span>]]: p <span class="keyword">for</span> p <span class="keyword">in</span> all_products}.values())
+     logging.info(<span class="string">f"去重后共获取 {len(unique_products)} 条数据"</span>)
+     <span class="keyword">return</span> unique_products
+ <span class="comment"># 主函数调用</span>
+ <span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:
+     <span class="comment"># 加载配置文件（包含选择器等信息）</span>
+     config = load_config(<span class="string">'scraper_config.json'</span>)
+     
+     <span class="comment"># 爬取配置</span>
+     base_url = config[<span class="string">'base_url'</span>]  <span class="comment"># 示例：'https://example.com/products?page={}'</span>
+     page_count = config[<span class="string">'page_count'</span>]  <span class="comment"># 爬取页数</span>
+     save_path = config[<span class="string">'save_path'</span>]  <span class="comment"># 输出路径：'output/products.csv'</span>
+     proxies = config.get(<span class="string">'proxies'</span>)  <span class="comment"># 代理配置（可选）</span>
+     
+     <span class="comment"># 执行爬取</span>
+     products = scrape_batch_pages(base_url, page_count, config, proxies)
+     
+     <span class="comment"># 保存数据</span>
+     save_to_csv(products, save_path)</code></pre>
+         </div>
+     </section>
+     <footer class="footer">
+         <p>© 2025 TECH·G | 极简黑绿科技风</p>
+     </footer>
+     <script>
+         // 修复复制代码功能 - 支持1.5秒悬浮窗
+         function copyCode(btn) {
+             const codeElement = btn.nextElementSibling.nextElementSibling;
+             const code = codeElement.textContent;
+             
+             navigator.clipboard.writeText(code).then(() => {
+                 const successMsg = btn.nextElementSibling;
+                 successMsg.classList.add('show');
+                 setTimeout(() => {
+                     successMsg.classList.remove('show');
+                 }, 1500);
+             }).catch(err => {
+                 console.error('复制失败:', err);
+                 const successMsg = btn.nextElementSibling;
+                 successMsg.textContent = '复制失败！';
+                 successMsg.style.color = '#f87171';
+                 successMsg.style.borderColor = 'rgba(248, 113, 113, 0.3)';
+                 successMsg.style.background = 'rgba(248, 113, 113, 0.1)';
+                 successMsg.classList.add('show');
+                 setTimeout(() => {
+                     successMsg.classList.remove('show');
+                     setTimeout(() => {
+                         successMsg.textContent = '复制成功！';
+                         successMsg.style.color = '#22c55e';
+                         successMsg.style.borderColor = 'rgba(34, 197, 94, 0.3)';
+                         successMsg.style.background = 'rgba(34, 197, 94, 0.1)';
+                     }, 300);
+                 }, 1500);
+             });
+         }
+     </script>
+ </body>
+ </html>

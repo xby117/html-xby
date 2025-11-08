@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TECH·G | 邮件自动发送脚本</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+        html, body { height: 100%; overflow-x: hidden; }
+        body { background: #000; color: #f5f5f5; position: relative; }
+        
+        /* 返回按钮 */
+        .back-container { 
+            padding: clamp(20px, 4vw, 24px) clamp(16px, 5vw, 40px); 
+            text-align: left; 
+        }
+        .back-btn { 
+            padding: clamp(6px, 1.5vw, 8px) clamp(16px, 2vw, 20px); 
+            background: rgba(249, 115, 22, 0.1); color: #f97316; 
+            text-decoration: none; border-radius: 4px; transition: all 0.3s ease; 
+            font-size: clamp(12px, 1.8vw, 14px); 
+            display: inline-block; 
+        }
+        .back-btn:hover { 
+            background: rgba(249, 115, 22, 0.2); transform: translateY(-2px); 
+        }
+        
+        /* 功能详情区域 */
+        .project-detail-section { 
+            width: 100%; padding: clamp(20px, 5vw, 40px) clamp(16px, 5vw, 40px); 
+            min-height: calc(100vh - 120px); background: #050505; 
+            max-width: 1000px; margin: 0 auto; 
+        }
+        .project-title { 
+            font-size: clamp(18px, 4vw, 24px); color: #fff; 
+            margin-bottom: clamp(20px, 4vw, 30px); position: relative; 
+            display: inline-block; 
+        }
+        .project-title::after { 
+            content: ''; display: block; width: clamp(50px, 12vw, 60px); height: 2px; 
+            background: #f97316; margin: 12px 0 0; 
+        }
+        
+        .project-meta { 
+            display: flex; flex-wrap: wrap; gap: clamp(16px, 3vw, 24px); 
+            margin-bottom: clamp(20px, 4vw, 30px); 
+        }
+        .meta-item { 
+            display: flex; flex-direction: column; 
+        }
+        .meta-label { 
+            font-size: clamp(11px, 1.5vw, 12px); color: #888; 
+            margin-bottom: 4px; 
+        }
+        .meta-value { 
+            font-size: clamp(13px, 2vw, 14px); color: #ccc; 
+        }
+        
+        .project-content { 
+            line-height: 1.8; font-size: clamp(13px, 2vw, 15px); 
+            color: #aaa; margin-bottom: clamp(20px, 4vw, 30px); 
+        }
+        .content-heading { 
+            font-size: clamp(15px, 2.5vw, 18px); color: #fff; 
+            margin: clamp(16px, 3vw, 20px) 0 clamp(8px, 1.5vw, 12px); 
+        }
+        .feature-list { 
+            padding-left: clamp(20px, 3vw, 24px); margin-bottom: clamp(16px, 3vw, 20px); 
+        }
+        .feature-list li { margin-bottom: 8px; }
+        
+        .tech-stack { 
+            display: flex; flex-wrap: wrap; gap: clamp(8px, 1.5vw, 10px); 
+            margin-bottom: clamp(20px, 4vw, 30px); 
+        }
+        .tech-tag { 
+            padding: clamp(6px, 1.5vw, 8px) clamp(12px, 2vw, 16px); 
+            border-radius: 4px; font-size: clamp(11px, 1.5vw, 12px); 
+            background: rgba(249, 115, 22, 0.1); color: #f97316; 
+        }
+        
+        /* 示例代码按钮 */
+        .code-btn {
+            padding: clamp(8px, 2vw, 10px) clamp(20px, 3vw, 24px);
+            background: rgba(34, 197, 94, 0.1); color: #22c55e;
+            text-decoration: none; border-radius: 4px; transition: all 0.3s ease;
+            font-size: clamp(13px, 2vw, 14px);
+            display: inline-block; margin-top: clamp(10px, 2vw, 16px);
+        }
+        .code-btn:hover {
+            background: rgba(34, 197, 94, 0.2); transform: translateY(-2px);
+        }
+        
+        /* 页脚 */
+        .footer { 
+            width: 100%; padding: clamp(16px, 3vw, 20px) 0; 
+            text-align: center; color: #888; font-size: clamp(11px, 2vw, 12px); 
+            background: rgba(0, 0, 0, 0.9); border-top: 1px solid rgba(34, 197, 94, 0.1);
+        }
+        
+        /* 小屏适配 */
+        @media (max-width: 375px) {
+            .project-meta { gap: 12px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="back-container">
+        <a href="python-projects.html" class="back-btn">退出到 Python 项目合集</a>
+    </div>
+
+    <section class="project-detail-section">
+        <h1 class="project-title">邮件自动发送脚本</h1>
+        
+        <div class="project-meta">
+            <div class="meta-item">
+                <span class="meta-label">项目类型</span>
+                <span class="meta-value">自动化工具</span>
+            </div>
+            <div class="meta-item">
+                <span class="meta-label">开发环境</span>
+                <span class="meta-value">Python 3.7+</span>
+            </div>
+            <div class="meta-item">
+                <span class="meta-label">适用场景</span>
+                <span class="meta-value">批量通知、节日祝福、工作汇报</span>
+            </div>
+        </div>
+        
+        <div class="project-content">
+            <p>该脚本基于 Python 内置的 smtplib 和 email 库开发，无需第三方依赖即可实现批量邮件发送功能。支持个性化邮件内容、附件上传、HTML 模板渲染，同时记录发送状态日志，方便追溯发送结果，适用于企业通知、客户维护、节日祝福等多种批量邮件场景。</p>
+            
+            <h3 class="content-heading">核心功能</h3>
+            <ul class="feature-list">
+                <li>批量发送支持：从 CSV 文件读取收件人信息，实现千人级邮件批量发送</li>
+                <li>个性化内容：支持邮件标题和正文插入变量（如姓名、公司等），提升邮件针对性</li>
+                <li>多格式附件：支持上传文档、图片、压缩包等多种类型附件，无大小限制（受邮箱服务商限制）</li>
+                <li>HTML 模板：支持使用 HTML 编写邮件模板，实现富文本邮件（含图片、链接、表格）</li>
+                <li>发送日志：自动记录每封邮件的发送状态（成功/失败）、失败原因，保存为日志文件</li>
+                <li>多邮箱适配：支持 QQ 邮箱、163 邮箱、企业邮箱等主流 SMTP 服务提供商</li>
+                <li>安全认证：支持 SSL/TLS 加密连接，保护邮箱账号和密码安全</li>
+            </ul>
+            
+            <h3 class="content-heading">技术亮点</h3>
+            <p>采用模块化设计，将邮件配置、内容构建、发送逻辑分离，便于维护和扩展；通过 CSV 文件管理收件人信息，支持动态添加字段；HTML 模板支持 Jinja2 语法，可灵活渲染变量；添加发送延迟控制，避免触发邮箱服务商的反垃圾邮件机制；日志系统采用 Python logging 模块，支持不同级别日志输出和文件保存。</p>
+        </div>
+        
+        <div class="tech-stack">
+            <span class="tech-tag">Python</span>
+            <span class="tech-tag">smtplib</span>
+            <span class="tech-tag">email</span>
+            <span class="tech-tag">CSV</span>
+            <span class="tech-tag">HTML</span>
+            <span class="tech-tag">logging</span>
+        </div>
+        
+        <a href="python-email-sender-code.html" class="code-btn">查看示例代码</a>
+    </section>
+
+    <footer class="footer">
+        <p>© 2025 TECH·G | 极简黑绿科技风</p>
+    </footer>
+</body>
+</html>

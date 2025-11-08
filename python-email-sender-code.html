@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+ <html lang="zh-CN">
+ <head>
+     <meta charset="UTF-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+     <title>TECH·G | 邮件自动发送脚本 - 示例代码</title>
+     <style>
+         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+         html, body { height: 100%; overflow-x: hidden; background: #000; color: #f5f5f5; }
+         
+         /* 返回按钮 */
+         .back-container { padding: clamp(20px, 4vw, 24px) clamp(16px, 5vw, 40px); text-align: left; }
+         .back-btn { 
+             padding: clamp(6px, 1.5vw, 8px) clamp(16px, 2vw, 20px); 
+             background: rgba(249, 115, 22, 0.1); color: #f97316; 
+             text-decoration: none; border-radius: 4px; transition: all 0.3s ease; 
+             font-size: clamp(12px, 1.8vw, 14px); display: inline-block; 
+         }
+         .back-btn:hover { background: rgba(249, 115, 22, 0.2); transform: translateY(-2px); }
+         
+         /* 代码区域 */
+         .code-section { 
+             width: 100%; padding: clamp(20px, 5vw, 40px) clamp(16px, 5vw, 40px); 
+             max-width: 1200px; margin: 0 auto; min-height: calc(100vh - 120px); 
+         }
+         .code-title { 
+             font-size: clamp(18px, 3vw, 22px); color: #fff; margin-bottom: clamp(20px, 4vw, 30px); 
+             position: relative; display: inline-block; 
+         }
+         .code-title::after { 
+             content: ''; display: block; width: clamp(50px, 10vw, 50px); height: 2px; 
+             background: #22c55e; margin: 8px 0 0; 
+         }
+         .code-description { 
+             font-size: clamp(13px, 2vw, 15px); color: #aaa; line-height: 1.6; 
+             margin-bottom: clamp(20px, 3vw, 24px); 
+         }
+         .code-card { 
+             background: #0a0a0a; border-radius: 8px; padding: clamp(20px, 3vw, 24px); 
+             position: relative; border: 1px solid rgba(34, 197, 94, 0.1); 
+         }
+         .copy-btn { 
+             position: absolute; top: clamp(16px, 2vw, 20px); right: clamp(16px, 2vw, 20px); 
+             padding: clamp(4px, 1vw, 6px) clamp(12px, 1.5vw, 16px); 
+             background: rgba(34, 197, 94, 0.1); color: #22c55e; 
+             border: none; border-radius: 4px; font-size: clamp(11px, 1.5vw, 12px); 
+             cursor: pointer; transition: all 0.3s ease; 
+             z-index: 10;
+         }
+         .copy-btn:hover { background: rgba(34, 197, 94, 0.2); }
+         .copy-success { 
+             position: absolute; top: clamp(16px, 2vw, 20px); right: clamp(100px, 10vw, 120px); 
+             color: #22c55e; font-size: clamp(11px, 1.5vw, 12px); 
+             background: rgba(34, 197, 94, 0.1); padding: clamp(4px, 1vw, 6px) clamp(12px, 1.5vw, 16px); 
+             border-radius: 4px; border: 1px solid rgba(34, 197, 94, 0.3);
+             display: none; opacity: 0; transition: opacity 0.3s ease;
+             z-index: 10;
+         }
+         .copy-success.show { 
+             display: inline-block; opacity: 1; 
+             animation: fadeInOut 1.5s ease-in-out;
+         }
+         @keyframes fadeInOut {
+             0% { opacity: 0; transform: translateY(5px); }
+             20% { opacity: 1; transform: translateY(0); }
+             80% { opacity: 1; transform: translateY(0); }
+             100% { opacity: 0; transform: translateY(5px); }
+         }
+         pre { 
+             white-space: pre-wrap; word-break: break-all; overflow-x: auto; 
+             font-size: clamp(12px, 1.8vw, 14px); line-height: 1.6; 
+             padding-top: clamp(8px, 1vw, 10px);
+         }
+         @keyframes fadeInOut {
+             0% { opacity: 0; transform: translateY(5px); }
+             20% { opacity: 1; transform: translateY(0); }
+             80% { opacity: 1; transform: translateY(0); }
+             100% { opacity: 0; transform: translateY(5px); }
+         }
+         pre { 
+             white-space: pre-wrap; word-break: break-all; overflow-x: auto; 
+             font-size: clamp(12px, 1.8vw, 14px); line-height: 1.6; 
+             padding-top: clamp(8px, 1vw, 10px);
+         }
+         code { color: #d1d5db; }
+         .keyword { color: #c084fc; }
+         .string { color: #facc15; }
+         .comment { color: #6b7280; }
+         .function { color: #38bdf8; }
+         .variable { color: #a78bfa; }
+         .number { color: #f87171; }
+         
+         /* 页脚 */
+         .footer { 
+             width: 100%; padding: clamp(16px, 3vw, 20px) 0; 
+             text-align: center; color: #888; font-size: clamp(11px, 2vw, 12px); 
+             background: rgba(0, 0, 0, 0.9); border-top: 1px solid rgba(34, 197, 94, 0.1);
+         }
+     </style>
+ </head>
+ <body>
+     <div class="back-container">
+         <a href="python-email-sender.html" class="back-btn">返回功能详情</a>
+     </div>
+     <section class="code-section">
+         <h1 class="code-title">邮件自动发送脚本 - 核心示例代码</h1>
+         <p class="code-description">以下是支持批量发送、个性化内容和附件上传的核心代码，适配 QQ/163 等主流邮箱：</p>
+         
+         <div class="code-card">
+             <button class="copy-btn" onclick="copyCode(this)">复制代码</button>
+             <span class="copy-success">复制成功！</span>
+             <pre><code><span class="keyword">import</span> smtplib
+ <span class="keyword">import</span> csv
+ <span class="keyword">import</span> logging
+ <span class="keyword">from</span> email.mime.text <span class="keyword">import</span> MIMEText
+ <span class="keyword">from</span> email.mime.multipart <span class="keyword">import</span> MIMEMultipart
+ <span class="keyword">from</span> email.header <span class="keyword">import</span> Header
+ <span class="keyword">import</span> time
+ <span class="keyword">import</span> os
+ <span class="comment"># 配置日志</span>
+ logging.basicConfig(
+     filename=<span class="string">'email_send_log.log'</span>,
+     level=logging.INFO,
+     format=<span class="string">'%(asctime)s - %(levelname)s - %(message)s'</span>,
+     encoding=<span class="string">'utf-8'</span>
+ )
+ <span class="comment"># 邮件配置类</span>
+ <span class="keyword">class</span> <span class="function">EmailSender</span>:
+     <span class="keyword">def</span> <span class="function">__init__</span>(self, smtp_server, smtp_port, sender_email, sender_password):
+         self.smtp_server = smtp_server
+         self.smtp_port = smtp_port
+         self.sender_email = sender_email
+         self.sender_password = sender_password
+         self.server = None
+     <span class="comment"># 连接 SMTP 服务器</span>
+     <span class="keyword">def</span> <span class="function">connect</span>(self):
+         <span class="keyword">try</span>:
+             self.server = smtplib.SMTP_SSL(self.smtp_server, self.smtp_port)
+             self.server.login(self.sender_email, self.sender_password)
+             logging.info(<span class="string">f"成功连接到 {self.smtp_server}"</span>)
+             <span class="keyword">return</span> <span class="keyword">True</span>
+         <span class="keyword">except</span> Exception <span class="keyword">as</span> e:
+             logging.error(<span class="string">f"连接服务器失败：{str(e)}"</span>)
+             <span class="keyword">return</span> <span class="keyword">False</span>
+     <span class="comment"># 构建邮件内容（支持 HTML 和附件）</span>
+     <span class="keyword">def</span> <span class="function">build_email</span>(self, to_email, subject, content, attachments=None, is_html=<span class="keyword">False</span>):
+         msg = MIMEMultipart()
+         msg[<span class="string">'From'</span>] = Header(<span class="string">f"通知中心 &lt;{self.sender_email}&gt;"</span>, <span class="string">'utf-8'</span>)
+         msg[<span class="string">'To'</span>] = to_email
+         msg[<span class="string">'Subject'</span>] = Header(subject, <span class="string">'utf-8'</span>)
+         <span class="comment"># 添加正文</span>
+         content_type = <span class="string">'html'</span> <span class="keyword">if</span> is_html <span class="keyword">else</span> <span class="string">'plain'</span>
+         msg.attach(MIMEText(content, content_type, <span class="string">'utf-8'</span>))
+         <span class="comment"># 添加附件</span>
+         <span class="keyword">if</span> attachments:
+             <span class="keyword">for</span> file_path <span class="keyword">in</span> attachments:
+                 <span class="keyword">if</span> os.path.exists(file_path):
+                     <span class="keyword">with</span> open(file_path, <span class="string">'rb'</span>) <span class="keyword">as</span> f:
+                         part = MIMEText(f.read(), <span class="string">'base64'</span>, <span class="string">'utf-8'</span>)
+                         part[<span class="string">'Content-Type'</span>] = <span class="string">'application/octet-stream'</span>
+                         filename = os.path.basename(file_path)
+                         part[<span class="string">'Content-Disposition'</span>] = <span class="string">f'attachment; filename="{filename}"'</span>
+                         msg.attach(part)
+                 <span class="keyword">else</span>:
+                     logging.warning(<span class="string">f"附件不存在：{file_path}"</span>)
+         <span class="keyword">return</span> msg
+     <span class="comment"># 发送单封邮件</span>
+     <span class="keyword">def</span> <span class="function">send_single_email</span>(self, to_email, subject, content, attachments=None, is_html=<span class="keyword">False</span>):
+         <span class="keyword">try</span>:
+             msg = self.build_email(to_email, subject, content, attachments, is_html)
+             self.server.sendmail(self.sender_email, to_email, msg.as_string())
+             logging.info(<span class="string">f"邮件发送成功：{to_email}"</span>)
+             <span class="keyword">return</span> <span class="keyword">True</span>
+         <span class="keyword">except</span> Exception <span class="keyword">as</span> e:
+             logging.error(<span class="string">f"邮件发送失败 {to_email}：{str(e)}"</span>)
+             <span class="keyword">return</span> <span class="keyword">False</span>
+     <span class="comment"># 批量发送邮件（从 CSV 读取收件人）</span>
+     <span class="keyword">def</span> <span class="function">send_batch_emails</span>(self, csv_path, subject_template, content_template, attachments=None, is_html=<span class="keyword">False</span>):
+         <span class="keyword">if</span> <span class="keyword">not</span> self.connect():
+             <span class="keyword">return</span>
+         <span class="keyword">with</span> open(csv_path, <span class="string">'r'</span>, encoding=<span class="string">'utf-8'</span>) <span class="keyword">as</span> f:
+             reader = csv.DictReader(f)
+             <span class="keyword">for</span> row <span class="keyword">in</span> reader:
+                 <span class="comment"># 个性化替换（CSV 列名作为变量）</span>
+                 subject = subject_template.format(**row)
+                 content = content_template.format(**row)
+                 to_email = row.get(<span class="string">'email'</span>)
+                 
+                 <span class="keyword">if</span> to_email:
+                     self.send_single_email(to_email, subject, content, attachments, is_html)
+                     time.sleep(<span class="number">1</span>)  <span class="comment"># 延迟避免触发反垃圾机制</span>
+                 <span class="keyword">else</span>:
+                     logging.warning(<span class="string">"CSV 中缺少 email 列"</span>)
+         self.server.quit()
+         logging.info(<span class="string">"批量发送任务完成"</span>)
+ <span class="comment"># 主函数调用</span>
+ <span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:
+     <span class="comment"># 邮箱配置（替换为自己的信息）</span>
+     smtp_config = {
+         <span class="string">'smtp_server'</span>: <span class="string">'smtp.qq.com'</span>,  <span class="comment"># QQ 邮箱 SMTP 服务器</span>
+         <span class="string">'smtp_port'</span>: <span class="number">465</span>,              <span class="comment"># SSL 端口</span>
+         <span class="string">'sender_email'</span>: <span class="string">'your_email@qq.com'</span>,
+         <span class="string">'sender_password'</span>: <span class="string">'your_auth_code'</span>  <span class="comment"># 邮箱授权码</span>
+     }
+     <span class="comment"># 初始化发送器</span>
+     sender = EmailSender(
+         smtp_config[<span class="string">'smtp_server'</span>],
+         smtp_config[<span class="string">'smtp_port'</span>],
+         smtp_config[<span class="string">'sender_email'</span>],
+         smtp_config[<span class="string">'sender_password'</span>]
+     )
+     <span class="comment"># 批量发送配置</span>
+     csv_path = <span class="string">'recipients.csv'</span>  <span class="comment"># CSV 包含 email, name 等列</span>
+     subject_template = <span class="string">'【通知】{name} 您好，您的订单已更新'</span>
+     content_template = <span class="string">'''
+     尊敬的 {name}：
+     您好！您的订单 {order_id} 已完成处理，详情请查看附件。
+     如有疑问，请联系客服：service@example.com
+     '''</span>
+     attachments = [<span class="string">'files/order_detail.pdf'</span>]  <span class="comment"># 附件路径</span>
+     <span class="comment"># 执行批量发送</span>
+     sender.send_batch_emails(
+         csv_path=csv_path,
+         subject_template=subject_template,
+         content_template=content_template,
+         attachments=attachments,
+         is_html=<span class="keyword">False</span>
+     )</code></pre>
+         </div>
+     </section>
+     <footer class="footer">
+         <p>© 2025 TECH·G | 极简黑绿科技风</p>
+     </footer>
+     <script>
+         // 修复复制代码功能 - 支持1.5秒悬浮窗
+         function copyCode(btn) {
+             const codeElement = btn.nextElementSibling.nextElementSibling;
+             const code = codeElement.textContent;
+             
+             navigator.clipboard.writeText(code).then(() => {
+                 const successMsg = btn.nextElementSibling;
+                 successMsg.classList.add('show');
+                 setTimeout(() => {
+                     successMsg.classList.remove('show');
+                 }, 1500);
+             }).catch(err => {
+                 console.error('复制失败:', err);
+                 const successMsg = btn.nextElementSibling;
+                 successMsg.textContent = '复制失败！';
+                 successMsg.style.color = '#f87171';
+                 successMsg.style.borderColor = 'rgba(248, 113, 113, 0.3)';
+                 successMsg.style.background = 'rgba(248, 113, 113, 0.1)';
+                 successMsg.classList.add('show');
+                 setTimeout(() => {
+                     successMsg.classList.remove('show');
+                     setTimeout(() => {
+                         successMsg.textContent = '复制成功！';
+                         successMsg.style.color = '#22c55e';
+                         successMsg.style.borderColor = 'rgba(34, 197, 94, 0.3)';
+                         successMsg.style.background = 'rgba(34, 197, 94, 0.1)';
+                     }, 300);
+                 }, 1500);
+             });
+         }
+     </script>
+ </body>
+ </html>

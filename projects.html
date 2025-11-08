@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TECH·G | 项目</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+        html, body { height: 100%; overflow-x: hidden; }
+        body { background: #000; color: #f5f5f5; position: relative; }
+        
+        /* 导航栏 */
+        .navbar { 
+            position: fixed; top: 0; left: 0; width: 100%; 
+            padding: clamp(12px, 3vw, 20px) clamp(16px, 5vw, 40px); 
+            z-index: 999; display: flex; justify-content: center; 
+            background: rgba(0, 0, 0, 0.9); backdrop-filter: blur(12px); 
+            border-bottom: 1px solid rgba(34, 197, 94, 0.1);
+        }
+        .nav-list { display: flex; list-style: none; gap: clamp(16px, 3vw, 40px); align-items: center; }
+        .nav-link { 
+            color: #888; text-decoration: none; 
+            font-size: clamp(13px, 2vw, 15px); 
+            padding: clamp(6px, 1.5vw, 8px) clamp(12px, 2vw, 16px); 
+            border-radius: 4px; transition: all 0.3s ease; 
+            white-space: nowrap;
+        }
+        .nav-link:hover, .nav-link.active { color: #22c55e; background: rgba(34, 197, 94, 0.1); }
+        
+        /* 项目区域 */
+        .projects-section { 
+            width: 100%; padding: clamp(40px, 10vw, 80px) clamp(16px, 5vw, 40px); 
+            min-height: 100vh; background: #050505; 
+            padding-top: 100px; 
+        }
+        .section-title { 
+            font-size: clamp(22px, 6vw, 32px); margin-bottom: clamp(40px, 8vw, 60px); 
+            color: #22c55e; text-align: center; position: relative; 
+        }
+        .section-title::after { 
+            content: ''; display: block; width: clamp(60px, 15vw, 80px); height: 2px; 
+            background: #22c55e; margin: 16px auto 0; 
+        }
+        
+        /* Python 项目入口卡片（移除 onclick，仅按钮可跳转） */
+        .project-portal-card { 
+            background: rgba(10, 10, 10, 0.8); border-radius: 8px; 
+            padding: clamp(24px, 5vw, 32px); width: 100%; 
+            max-width: clamp(300px, 90vw, 400px); 
+            border: 1px solid rgba(249, 115, 22, 0.2); 
+            transition: all 0.3s ease; /* 保留hover效果，移除cursor: pointer */
+            text-align: center; margin: 0 auto; 
+            touch-action: manipulation;
+        }
+        .project-portal-card:hover { 
+            border-color: #f97316; transform: translateY(-5px); 
+            box-shadow: 0 8px 15px rgba(249, 115, 22, 0.08); 
+        }
+        .portal-card-title { 
+            font-size: clamp(18px, 4vw, 22px); color: #fff; 
+            margin-bottom: clamp(8px, 2vw, 12px); 
+        }
+        .portal-card-desc { 
+            font-size: clamp(12px, 1.8vw, 13px); color: #aaa; 
+            line-height: 1.6; margin-bottom: clamp(16px, 2vw, 20px); 
+        }
+        .view-projects-btn { 
+            display: inline-block; 
+            padding: clamp(8px, 2vw, 10px) clamp(20px, 4vw, 24px); 
+            background: rgba(249, 115, 22, 0.1); color: #f97316; 
+            text-decoration: none; border-radius: 4px; transition: all 0.3s ease; 
+            font-size: clamp(13px, 2vw, 15px); 
+            cursor: pointer; /* 仅按钮显示指针样式 */
+        }
+        .view-projects-btn:hover { 
+            background: rgba(249, 115, 22, 0.2); transform: translateY(-2px); 
+        }
+        
+        /* 其他项目提示 */
+        .other-projects-tip { 
+            font-size: clamp(13px, 3vw, 16px); color: #888; 
+            max-width: clamp(280px, 70vw, 400px); line-height: 1.7; 
+            text-align: center; margin: 30px auto 0; 
+        }
+        
+        /* 页脚 */
+        .footer { 
+            width: 100%; padding: clamp(16px, 3vw, 20px) 0; 
+            text-align: center; color: #888; font-size: clamp(11px, 2vw, 12px); 
+            background: rgba(0, 0, 0, 0.9); border-top: 1px solid rgba(34, 197, 94, 0.1);
+            margin-top: clamp(40px, 8vw, 60px); 
+        }
+        
+        /* 小屏适配 */
+        @media (max-width: 375px) {
+            .nav-list { gap: 12px; }
+            .nav-link { padding: 6px 10px; font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <ul class="nav-list">
+            <li><a href="index.html" class="nav-link">首页</a></li>
+            <li><a href="projects.html" class="nav-link active">项目</a></li>
+            <li><a href="contact.html" class="nav-link">联系</a></li>
+        </ul>
+    </nav>
+
+    <section class="projects-section">
+        <h2 class="section-title">所有项目</h2>
+        
+        <!-- Python 项目入口（仅按钮可跳转，移除卡片onclick） -->
+        <div class="project-portal-card">
+            <h3 class="portal-card-title">Python 项目合集</h3>
+            <p class="portal-card-desc">包含数据可视化、自动化脚本、网页爬虫等 6 个实用项目，采用简洁高效的代码实现，适配多种应用场景。</p>
+            <a href="python-projects.html" class="view-projects-btn">查看 Python 项目合集</a>
+        </div>
+        
+        <!-- 其他项目提示 -->
+        <p class="other-projects-tip">更多类型项目（Web 开发、工具类等）正在筹备中～ 敬请期待！</p>
+    </section>
+
+    <footer class="footer">
+        <p>© 2025 TECH·G | 极简黑绿科技风</p>
+    </footer>
+</body>
+</html>

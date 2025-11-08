@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TECH·G | 图片批量处理工具</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+        html, body { height: 100%; overflow-x: hidden; }
+        body { background: #000; color: #f5f5f5; position: relative; }
+        
+        /* 返回按钮 */
+        .back-container { 
+            padding: clamp(20px, 4vw, 24px) clamp(16px, 5vw, 40px); 
+            text-align: left; 
+        }
+        .back-btn { 
+            padding: clamp(6px, 1.5vw, 8px) clamp(16px, 2vw, 20px); 
+            background: rgba(249, 115, 22, 0.1); color: #f97316; 
+            text-decoration: none; border-radius: 4px; transition: all 0.3s ease; 
+            font-size: clamp(12px, 1.8vw, 14px); 
+            display: inline-block; 
+        }
+        .back-btn:hover { 
+            background: rgba(249, 115, 22, 0.2); transform: translateY(-2px); 
+        }
+        
+        /* 功能详情区域 */
+        .project-detail-section { 
+            width: 100%; padding: clamp(20px, 5vw, 40px) clamp(16px, 5vw, 40px); 
+            min-height: calc(100vh - 120px); background: #050505; 
+            max-width: 1000px; margin: 0 auto; 
+        }
+        .project-title { 
+            font-size: clamp(18px, 4vw, 24px); color: #fff; 
+            margin-bottom: clamp(20px, 4vw, 30px); position: relative; 
+            display: inline-block; 
+        }
+        .project-title::after { 
+            content: ''; display: block; width: clamp(50px, 12vw, 60px); height: 2px; 
+            background: #f97316; margin: 12px 0 0; 
+        }
+        
+        .project-meta { 
+            display: flex; flex-wrap: wrap; gap: clamp(16px, 3vw, 24px); 
+            margin-bottom: clamp(20px, 4vw, 30px); 
+        }
+        .meta-item { 
+            display: flex; flex-direction: column; 
+        }
+        .meta-label { 
+            font-size: clamp(11px, 1.5vw, 12px); color: #888; 
+            margin-bottom: 4px; 
+        }
+        .meta-value { 
+            font-size: clamp(13px, 2vw, 14px); color: #ccc; 
+        }
+        
+        .project-content { 
+            line-height: 1.8; font-size: clamp(13px, 2vw, 15px); 
+            color: #aaa; margin-bottom: clamp(20px, 4vw, 30px); 
+        }
+        .content-heading { 
+            font-size: clamp(15px, 2.5vw, 18px); color: #fff; 
+            margin: clamp(16px, 3vw, 20px) 0 clamp(8px, 1.5vw, 12px); 
+        }
+        .feature-list { 
+            padding-left: clamp(20px, 3vw, 24px); margin-bottom: clamp(16px, 3vw, 20px); 
+        }
+        .feature-list li { margin-bottom: 8px; }
+        
+        .tech-stack { 
+            display: flex; flex-wrap: wrap; gap: clamp(8px, 1.5vw, 10px); 
+            margin-bottom: clamp(20px, 4vw, 30px); 
+        }
+        .tech-tag { 
+            padding: clamp(6px, 1.5vw, 8px) clamp(12px, 2vw, 16px); 
+            border-radius: 4px; font-size: clamp(11px, 1.5vw, 12px); 
+            background: rgba(249, 115, 22, 0.1); color: #f97316; 
+        }
+        
+        /* 示例代码按钮 */
+        .code-btn {
+            padding: clamp(8px, 2vw, 10px) clamp(20px, 3vw, 24px);
+            background: rgba(34, 197, 94, 0.1); color: #22c55e;
+            text-decoration: none; border-radius: 4px; transition: all 0.3s ease;
+            font-size: clamp(13px, 2vw, 14px);
+            display: inline-block; margin-top: clamp(10px, 2vw, 16px);
+        }
+        .code-btn:hover {
+            background: rgba(34, 197, 94, 0.2); transform: translateY(-2px);
+        }
+        
+        /* 页脚 */
+        .footer { 
+            width: 100%; padding: clamp(16px, 3vw, 20px) 0; 
+            text-align: center; color: #888; font-size: clamp(11px, 2vw, 12px); 
+            background: rgba(0, 0, 0, 0.9); border-top: 1px solid rgba(34, 197, 94, 0.1);
+        }
+        
+        /* 小屏适配 */
+        @media (max-width: 375px) {
+            .project-meta { gap: 12px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="back-container">
+        <a href="python-projects.html" class="back-btn">退出到 Python 项目合集</a>
+    </div>
+
+    <section class="project-detail-section">
+        <h1 class="project-title">图片批量处理工具</h1>
+        
+        <div class="project-meta">
+            <div class="meta-item">
+                <span class="meta-label">项目类型</span>
+                <span class="meta-value">图像处理工具</span>
+            </div>
+            <div class="meta-item">
+                <span class="meta-label">开发环境</span>
+                <span class="meta-value">Python 3.7+</span>
+            </div>
+            <div class="meta-item">
+                <span class="meta-label">适用场景</span>
+                <span class="meta-value">图片优化、批量处理、格式转换</span>
+            </div>
+        </div>
+        
+        <div class="project-content">
+            <p>该工具基于 Python Pillow 库开发，支持图片批量处理，无需专业图像处理软件即可完成格式转换、尺寸压缩、水印添加等操作。工具支持自定义处理参数，处理速度快，输出质量可控，适用于自媒体运营、电商图片优化、办公文档图片处理等多种场景，大幅提升图片处理效率。</p>
+            
+            <h3 class="content-heading">核心功能</h3>
+            <ul class="feature-list">
+                <li>批量格式转换：支持 JPG、PNG、GIF、BMP 等多种格式相互转换，可批量处理文件夹内所有图片</li>
+                <li>尺寸压缩：支持按比例压缩或固定尺寸压缩，自定义压缩质量（1-100），平衡图片质量和文件大小</li>
+                <li>水印添加：支持文字水印和图片水印，可自定义水印位置、透明度、大小、颜色</li>
+                <li>图片特效：支持灰度处理、黑白反转、亮度调整、对比度调整等基础特效</li>
+                <li>批量重命名：支持按自定义规则批量重命名处理后的图片，便于管理</li>
+                <li>文件夹输出：处理后的图片自动保存到指定文件夹，保持原文件结构不变</li>
+                <li>进度显示：实时显示处理进度、成功条数、失败条数，便于监控任务状态</li>
+            </ul>
+            
+            <h3 class="content-heading">技术亮点</h3>
+            <p>基于 Pillow 库实现高效图像处理，支持多种图片格式的读写和编辑；采用多线程处理机制，大幅提升批量处理速度；支持递归遍历文件夹，处理子目录下的图片文件；参数配置通过 JSON 文件实现，灵活调整处理规则；添加图片质量无损压缩算法，在减小文件大小的同时保持清晰度；支持批量预览处理效果，避免误操作；异常处理机制完善，支持跳过损坏图片，确保任务正常完成。</p>
+        </div>
+        
+        <div class="tech-stack">
+            <span class="tech-tag">Python</span>
+            <span class="tech-tag">Pillow</span>
+            <span class="tech-tag">os</span>
+            <span class="tech-tag">glob</span>
+            <span class="tech-tag">多线程</span>
+            <span class="tech-tag">JSON</span>
+        </div>
+        
+        <a href="python-image-processor-code.html" class="code-btn">查看示例代码</a>
+    </section>
+
+    <footer class="footer">
+        <p>© 2025 TECH·G | 极简黑绿科技风</p>
+    </footer>
+</body>
+</html>

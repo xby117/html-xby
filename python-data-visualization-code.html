@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+ <html lang="zh-CN">
+ <head>
+     <meta charset="UTF-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+     <title>TECH·G | 数据可视化分析工具 - 示例代码</title>
+     <style>
+         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+         html, body { height: 100%; overflow-x: hidden; background: #000; color: #f5f5f5; }
+         
+         /* 返回按钮 */
+         .back-container { padding: clamp(20px, 4vw, 24px) clamp(16px, 5vw, 40px); text-align: left; }
+         .back-btn { 
+             padding: clamp(6px, 1.5vw, 8px) clamp(16px, 2vw, 20px); 
+             background: rgba(249, 115, 22, 0.1); color: #f97316; 
+             text-decoration: none; border-radius: 4px; transition: all 0.3s ease; 
+             font-size: clamp(12px, 1.8vw, 14px); display: inline-block; 
+         }
+         .back-btn:hover { background: rgba(249, 115, 22, 0.2); transform: translateY(-2px); }
+         
+         /* 代码区域 */
+         .code-section { 
+             width: 100%; padding: clamp(20px, 5vw, 40px) clamp(16px, 5vw, 40px); 
+             max-width: 1200px; margin: 0 auto; min-height: calc(100vh - 120px); 
+         }
+         .code-title { 
+             font-size: clamp(18px, 3vw, 22px); color: #fff; margin-bottom: clamp(20px, 4vw, 30px); 
+             position: relative; display: inline-block; 
+         }
+         .code-title::after { 
+             content: ''; display: block; width: clamp(50px, 10vw, 50px); height: 2px; 
+             background: #22c55e; margin: 8px 0 0; 
+         }
+         .code-description { 
+             font-size: clamp(13px, 2vw, 15px); color: #aaa; line-height: 1.6; 
+             margin-bottom: clamp(20px, 3vw, 24px); 
+         }
+         .code-card { 
+             background: #0a0a0a; border-radius: 8px; padding: clamp(20px, 3vw, 24px); 
+             position: relative; border: 1px solid rgba(34, 197, 94, 0.1); 
+         }
+         .copy-btn { 
+             position: absolute; top: clamp(16px, 2vw, 20px); right: clamp(16px, 2vw, 20px); 
+             padding: clamp(4px, 1vw, 6px) clamp(12px, 1.5vw, 16px); 
+             background: rgba(34, 197, 94, 0.1); color: #22c55e; 
+             border: none; border-radius: 4px; font-size: clamp(11px, 1.5vw, 12px); 
+             cursor: pointer; transition: all 0.3s ease; 
+             z-index: 10;
+         }
+         .copy-btn:hover { background: rgba(34, 197, 94, 0.2); }
+         .copy-success { 
+             position: absolute; top: clamp(16px, 2vw, 20px); right: clamp(100px, 10vw, 120px); 
+             color: #22c55e; font-size: clamp(11px, 1.5vw, 12px); 
+             background: rgba(34, 197, 94, 0.1); padding: clamp(4px, 1vw, 6px) clamp(12px, 1.5vw, 16px); 
+             border-radius: 4px; border: 1px solid rgba(34, 197, 94, 0.3);
+             display: none; opacity: 0; transition: opacity 0.3s ease;
+             z-index: 10;
+         }
+         .copy-success.show { 
+             display: inline-block; opacity: 1; 
+             animation: fadeInOut 1.5s ease-in-out;
+         }
+         @keyframes fadeInOut {
+             0% { opacity: 0; transform: translateY(5px); }
+             20% { opacity: 1; transform: translateY(0); }
+             80% { opacity: 1; transform: translateY(0); }
+             100% { opacity: 0; transform: translateY(5px); }
+         }
+         pre { 
+             white-space: pre-wrap; word-break: break-all; overflow-x: auto; 
+             font-size: clamp(12px, 1.8vw, 14px); line-height: 1.6; 
+             padding-top: clamp(8px, 1vw, 10px); /* 避免顶部被按钮遮挡 */
+         }
+         code { color: #d1d5db; }
+         .keyword { color: #c084fc; }
+         .string { color: #facc15; }
+         .comment { color: #6b7280; }
+         .function { color: #38bdf8; }
+         .variable { color: #a78bfa; }
+         .number { color: #f87171; }
+         
+         /* 页脚 */
+         .footer { 
+             width: 100%; padding: clamp(16px, 3vw, 20px) 0; 
+             text-align: center; color: #888; font-size: clamp(11px, 2vw, 12px); 
+             background: rgba(0, 0, 0, 0.9); border-top: 1px solid rgba(34, 197, 94, 0.1);
+         }
+     </style>
+ </head>
+ <body>
+     <div class="back-container">
+         <a href="python-data-visualization.html" class="back-btn">返回功能详情</a>
+     </div>
+     <section class="code-section">
+         <h1 class="code-title">数据可视化分析工具 - 核心示例代码</h1>
+         <p class="code-description">以下是批量数据导入与折线图生成的核心代码，支持 CSV 数据读取、缺失值处理和自定义图表样式：</p>
+         <div class="code-card">
+             <button class="copy-btn" onclick="copyCode(this)">复制代码</button>
+             <span class="copy-success">复制成功！</span>
+             <pre><code><span class="keyword">import</span> pandas <span class="keyword">as</span> pd
+ <span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt
+ <span class="keyword">import</span> numpy <span class="keyword">as</span> np  <span class="comment"># 补充缺失的 numpy 导入</span>
+ <span class="comment"># 1. 数据导入与清洗</span>
+ <span class="keyword">def</span> <span class="function">load_and_clean_data</span>(file_path):
+     <span class="comment"># 读取 CSV 数据</span>
+     df = pd.read_csv(file_path)
+     <span class="comment"># 填充缺失值（数值型用均值，字符型用众数）</span>
+     df = df.fillna({
+         col: df[col].mean() <span class="keyword">if</span> df[col].dtype <span class="keyword">in</span> [np.float64, np.int64] <span class="keyword">else</span> df[col].mode()[0]
+         <span class="keyword">for</span> col <span class="keyword">in</span> df.columns
+     })
+     <span class="comment"># 去除重复数据</span>
+     df = df.drop_duplicates()
+     <span class="keyword">return</span> df
+ <span class="comment"># 2. 生成折线图</span>
+ <span class="keyword">def</span> <span class="function">generate_line_chart</span>(df, x_col, y_cols, title, save_path):
+     <span class="comment"># 设置中文字体</span>
+     plt.rcParams['font.sans-serif'] = ['SimHei', 'Arial Unicode MS']
+     plt.rcParams['axes.unicode_minus'] = <span class="keyword">False</span>
+     
+     <span class="comment"># 创建图表</span>
+     plt.figure(figsize=(12, 6))
+     colors = ['#22c55e', '#38bdf8', '#f97316', '#c084fc', '#f87171']
+     
+     <span class="comment"># 绘制多条折线</span>
+     <span class="keyword">for</span> i, y_col <span class="keyword">in</span> enumerate(y_cols):
+         plt.plot(
+             df[x_col], df[y_col], 
+             color=colors[i % len(colors)], 
+             linewidth=2, 
+             label=y_col
+         )
+     
+     <span class="comment"># 自定义图表样式</span>
+     plt.title(title, fontsize=16, color='#fff', pad=20)
+     plt.xlabel(x_col, fontsize=12, color='#ccc')
+     plt.ylabel('数值', fontsize=12, color='#ccc')
+     plt.legend(fontsize=10, labelcolor='#ccc')
+     plt.grid(True, alpha=0.1, color='#444')
+     
+     <span class="comment"># 设置背景色</span>
+     ax = plt.gca()
+     ax.set_facecolor('#0a0a0a')
+     plt.gcf().patch.set_facecolor('#0a0a0a')
+     
+     <span class="comment"># 保存图片（透明背景）</span>
+     plt.savefig(
+         save_path, 
+         dpi=300, 
+         bbox_inches='tight', 
+         facecolor='#0a0a0a', 
+         edgecolor='none'
+     )
+     plt.close()
+ <span class="comment"># 3. 主函数调用</span>
+ <span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:
+     <span class="comment"># 数据路径</span>
+     data_path = <span class="string">'data/sales_data.csv'</span>
+     save_path = <span class="string">'output/sales_trend.png'</span>
+     
+     <span class="comment"># 执行流程</span>
+     df = load_and_clean_data(data_path)
+     generate_line_chart(
+         df, 
+         x_col=<span class="string">'日期'</span>, 
+         y_cols=[<span class="string">'销售额'</span>, <span class="string">'订单量'</span>, <span class="string">'客单价'</span>], 
+         title=<span class="string">'月度销售趋势分析'</span>, 
+         save_path=save_path
+     )
+     print(<span class="string">f"图表已保存至：{save_path}"</span>)</code></pre>
+         </div>
+     </section>
+     <footer class="footer">
+         <p>© 2025 TECH·G | 极简黑绿科技风</p>
+     </footer>
+     <script>
+         // 修复复制代码功能 - 支持1.5秒悬浮窗
+         function copyCode(btn) {
+             // 获取代码元素
+             const codeElement = btn.nextElementSibling.nextElementSibling;
+             const code = codeElement.textContent;
+             
+             // 复制到剪贴板
+             navigator.clipboard.writeText(code).then(() => {
+                 const successMsg = btn.nextElementSibling;
+                 // 显示悬浮窗
+                 successMsg.classList.add('show');
+                 // 1.5秒后移除显示类
+                 setTimeout(() => {
+                     successMsg.classList.remove('show');
+                 }, 1500);
+             }).catch(err => {
+                 console.error('复制失败:', err);
+                 const successMsg = btn.nextElementSibling;
+                 successMsg.textContent = '复制失败！';
+                 successMsg.style.color = '#f87171';
+                 successMsg.style.borderColor = 'rgba(248, 113, 113, 0.3)';
+                 successMsg.style.background = 'rgba(248, 113, 113, 0.1)';
+                 successMsg.classList.add('show');
+                 setTimeout(() => {
+                     successMsg.classList.remove('show');
+                     // 恢复默认文本和样式
+                     setTimeout(() => {
+                         successMsg.textContent = '复制成功！';
+                         successMsg.style.color = '#22c55e';
+                         successMsg.style.borderColor = 'rgba(34, 197, 94, 0.3)';
+                         successMsg.style.background = 'rgba(34, 197, 94, 0.1)';
+                     }, 300);
+                 }, 1500);
+             });
+         }
+     </script>
+ </body>
+ </html>

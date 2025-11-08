@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TECH·G | 图片批量处理工具 - 示例代码</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+        html, body { height: 100%; overflow-x: hidden; background: #000; color: #f5f5f5; }
+        /* 返回按钮 */
+        .back-container { padding: clamp(20px, 4vw, 24px) clamp(16px, 5vw, 40px); text-align: left; }
+        .back-btn { 
+            padding: clamp(6px, 1.5vw, 8px) clamp(16px, 2vw, 20px); 
+            background: rgba(249, 115, 22, 0.1); color: #f97316; 
+            text-decoration: none; border-radius: 4px; transition: all 0.3s ease; 
+            font-size: clamp(12px, 1.8vw, 14px); display: inline-block; 
+        }
+        .back-btn:hover { background: rgba(249, 115, 22, 0.2); transform: translateY(-2px); }
+        /* 代码区域 */
+        .code-section { 
+            width: 100%; padding: clamp(20px, 5vw, 40px) clamp(16px, 5vw, 40px); 
+            max-width: 1200px; margin: 0 auto; min-height: calc(100vh - 120px); 
+        }
+        .code-title { 
+            font-size: clamp(18px, 3vw, 22px); color: #fff; margin-bottom: clamp(20px, 4vw, 30px); 
+            position: relative; display: inline-block; 
+        }
+        .code-title::after { 
+            content: ''; display: block; width: clamp(50px, 10vw, 50px); height: 2px; 
+            background: #22c55e; margin: 8px 0 0; 
+        }
+        .code-description { 
+            font-size: clamp(13px, 2vw, 15px); color: #aaa; line-height: 1.6; 
+            margin-bottom: clamp(20px, 3vw, 24px); 
+        }
+        .code-card { 
+            background: #0a0a0a; border-radius: 8px; padding: clamp(20px, 3vw, 24px); 
+            position: relative; border: 1px solid rgba(34, 197, 94, 0.1); 
+        }
+        .copy-btn { 
+            position: absolute; top: clamp(16px, 2vw, 20px); right: clamp(16px, 2vw, 20px); 
+            padding: clamp(4px, 1vw, 6px) clamp(12px, 1.5vw, 16px); 
+            background: rgba(34, 197, 94, 0.1); color: #22c55e; 
+            border: none; border-radius: 4px; font-size: clamp(11px, 1.5vw, 12px); 
+            cursor: pointer; transition: all 0.3s ease; 
+            z-index: 10;
+        }
+        .copy-btn:hover { background: rgba(34, 197, 94, 0.2); }
+        .copy-success { 
+            position: absolute; top: clamp(16px, 2vw, 20px); right: clamp(100px, 10vw, 120px); 
+            color: #22c55e; font-size: clamp(11px, 1.5vw, 12px); 
+            background: rgba(34, 197, 94, 0.1); padding: clamp(4px, 1vw, 6px) clamp(12px, 1.5vw, 16px); 
+            border-radius: 4px; border: 1px solid rgba(34, 197, 94, 0.3);
+            display: none; opacity: 0; transition: opacity 0.3s ease;
+            z-index: 10;
+        }
+        .copy-success.show { 
+            display: inline-block; opacity: 1; 
+            animation: fadeInOut 1.5s ease-in-out;
+        }
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translateY(5px); }
+            20% { opacity: 1; transform: translateY(0); }
+            80% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(5px); }
+        }
+        pre { 
+            white-space: pre-wrap; word-break: break-all; overflow-x: auto; 
+            font-size: clamp(12px, 1.8vw, 14px); line-height: 1.6; 
+            padding-top: clamp(8px, 1vw, 10px);
+        }
+        code { color: #d1d5db; }
+        .keyword { color: #c084fc; }
+        .string { color: #facc15; }
+        .comment { color: #6b7280; }
+        .function { color: #38bdf8; }
+        .variable { color: #a78bfa; }
+        .number { color: #f87171; }
+        /* 页脚 */
+        .footer { 
+            width: 100%; padding: clamp(16px, 3vw, 20px) 0; 
+            text-align: center; color: #888; font-size: clamp(11px, 2vw, 12px); 
+            background: rgba(0, 0, 0, 0.9); border-top: 1px solid rgba(34, 197, 94, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="back-container">
+        <a href="python-image-processor.html" class="back-btn">返回功能详情</a>
+    </div>
+
+    <section class="code-section">
+        <h1 class="code-title">图片批量处理工具 - 核心示例代码</h1>
+        <p class="code-description">以下是支持批量格式转换、尺寸压缩、水印添加和特效处理的核心代码，采用多线程提升效率，支持配置化操作：</p>
+        
+        <div class="code-card">
+            <button class="copy-btn" onclick="copyCode(this)">复制代码</button>
+            <span class="copy-success">复制成功！</span>
+            <pre><code><span class="keyword">from</span> PIL <span class="keyword">import</span> Image, ImageDraw, ImageFont
+<span class="keyword">import</span> os
+<span class="keyword">import</span> glob
+<span class="keyword">import</span> json
+<span class="keyword">import</span> logging
+<span class="keyword">from</span> concurrent.futures <span class="keyword">import</span> ThreadPoolExecutor, as_completed
+<span class="keyword">import</span> argparse
+
+<span class="comment"># 配置日志</span>
+logging.basicConfig(
+    filename=<span class="string">'image_processor_log.log'</span>,
+    level=logging.INFO,
+    format=<span class="string">'%(asctime)s - %(levelname)s - %(message)s'</span>,
+    encoding=<span class="string">'utf-8'</span>
+)
+
+<span class="comment"># 支持的图片格式</span>
+SUPPORTED_FORMATS = (<span class="string">'.jpg'</span>, <span class="string">'.jpeg'</span>, <span class="string">'.png'</span>, <span class="string">'.gif'</span>, <span class="string">'.bmp'</span>, <span class="string">'.tiff'</span>)
+
+<span class="comment"># 加载处理配置</span>
+<span class="keyword">def</span> <span class="function">load_config</span>(config_path):
+    <span class="keyword">with</span> open(config_path, <span class="string">'r'</span>, encoding=<span class="string">'utf-8'</span>) <span class="keyword">as</span> f:
+        <span class="keyword">return</span> json.load(f)
+
+<span class="comment"># 获取文件夹内所有图片文件（支持递归）</span>
+<span class="keyword">def</span> <span class="function">get_all_image_files</span>(input_dir, recursive=<span class="keyword">True</span>):
+    image_files = []
+    <span class="keyword">if</span> recursive:
+        <span class="keyword">for</span> root, dirs, files <span class="keyword">in</span> os.walk(input_dir):
+            <span class="keyword">for</span> file <span class="keyword">in</span> files:
+                <span class="keyword">if</span> os.path.splitext(file.lower())[<span class="number">1</span>] <span class="keyword">in</span> SUPPORTED_FORMATS:
+                    image_files.append(os.path.join(root, file))
+    <span class="keyword">else</span>:
+        <span class="keyword">for</span> ext <span class="keyword">in</span> SUPPORTED_FORMATS:
+            image_files.extend(glob.glob(os.path.join(input_dir, <span class="string">f'*{ext}'</span>), recursive=<span class="keyword">False</span>))
+    <span class="keyword">return</span> image_files
+
+<span class="comment"># 图片尺寸压缩（按比例或固定尺寸）</span>
+<span class="keyword">def</span> <span class="function">resize_image</span>(image, config):
+    width, height = image.size
+    resize_type = config.get(<span class="string">'resize_type'</span>, <span class="string">'ratio'</span>)  <span class="comment"># ratio/fixed</span>
+    
+    <span class="keyword">if</span> resize_type == <span class="string">'ratio'</span>:
+        <span class="comment"># 按比例压缩</span>
+        ratio = config.get(<span class="string">'ratio'</span>, <span class="number">0.8</span>)
+        new_width = int(width * ratio)
+        new_height = int(height * ratio)
+    <span class="keyword">else</span>:
+        <span class="comment"># 固定尺寸</span>
+        new_width = config.get(<span class="string">'width'</span>, width)
+        new_height = config.get(<span class="string">'height'</span>, height)
+    
+    <span class="comment"># 保持宽高比（可选）</span>
+    <span class="keyword">if</span> config.get(<span class="string">'keep_aspect_ratio'</span>, <span class="keyword">True</span>):
+        aspect_ratio = width / height
+        new_aspect_ratio = new_width / new_height
+        <span class="keyword">if</span> new_aspect_ratio != aspect_ratio:
+            <span class="keyword">if</span> new_width / width < new_height / height:
+                new_height = int(new_width / aspect_ratio)
+            <span class="keyword">else</span>:
+                new_width = int(new_height * aspect_ratio)
+    
+    <span class="comment"># 调整图片尺寸（使用抗锯齿）</span>
+    resized_image = image.resize((new_width, new_height), Image.Resampling.LANCZOS)
+    <span class="keyword">return</span> resized_image
+
+<span class="comment"># 添加文字水印</span>
+<span class="keyword">def</span> <span class="function">add_text_watermark</span>(image, config):
+    watermark_text = config.get(<span class="string">'text'</span>, <span class="string">''</span>)
+    <span class="keyword">if</span> <span class="keyword">not</span> watermark_text:
+        <span class="keyword">return</span> image
+    
+    <span class="comment"># 水印配置</span>
+    font_size = config.get(<span class="string">'font_size'</span>, <span class="number">20</span>)
+    color = config.get(<span class="string">'color'</span>, <span class="string">'#ffffff'</span>)
+    opacity = config.get(<span class="string">'opacity'</span>, <span class="number">50</span>)  <span class="comment"># 0-100</span>
+    position = config.get(<span class="string">'position'</span>, <span class="string">'bottom_right'</span>)  <span class="comment"># top_left/top_right/bottom_left/bottom_right</span>
+    margin = config.get(<span class="string">'margin'</span>, <span class="number">20</span>)
+    
+    <span class="comment"># 创建透明图层</span>
+    watermark_layer = Image.new(<span class="string">'RGBA'</span>, image.size, (<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>))
+    draw = ImageDraw.Draw(watermark_layer)
+    
+    <span class="comment"># 加载字体（使用默认字体，可指定路径）</span>
+    <span class="keyword">try</span>:
+        font = ImageFont.truetype(<span class="string">'arial.ttf'</span>, font_size)
+    <span class="keyword">except</span>:
+        font = ImageFont.load_default(size=font_size)
+    
+    <span class="comment"># 计算文字位置</span>
+    text_width, text_height = draw.textbbox((<span class="number">0</span>, <span class="number">0</span>), watermark_text, font=font)[<span class="number">2</span>:]
+    width, height = image.size
+    
+    <span class="keyword">if</span> position == <span class="string">'top_left'</span>:
+        x, y = margin, margin
+    elif position == <span class="string">'top_right'</span>:
+        x, y = width - text_width - margin, margin
+    elif position == <span class="string">'bottom_left'</span>:
+        x, y = margin, height - text_height - margin
+    <span class="keyword">else</span>: <span class="comment"># bottom_right</span>
+        x, y = width - text_width - margin, height - text_height - margin
+    
+    <span class="comment"># 绘制文字（设置透明度）</span>
+    draw.text((x, y), watermark_text, font=font, fill=color + hex(int(opacity * <span class="number">2.55</span>))[<span class="number">2</span>:].zfill(<span class="number">2</span>))
+    
+    <span class="comment"># 合并图层</span>
+    <span class="keyword">if</span> image.mode != <span class="string">'RGBA'</span>:
+        image = image.convert(<span class="string">'RGBA'</span>)
+    combined = Image.alpha_composite(image, watermark_layer)
+    <span class="keyword">return</span> combined.convert(<span class="string">'RGB'</span>)  <span class="comment"># 转换回 RGB 避免透明通道问题</span>
+
+<span class="comment"># 添加图片水印</span>
+<span class="keyword">def</span> <span class="function">add_image_watermark</span>(image, config):
+    watermark_path = config.get(<span class="string">'path'</span>, <span class="string">''</span>)
+    <span class="keyword">if</span> <span class="keyword">not</span> watermark_path <span class="keyword">or</span> <span class="keyword">not</span> os.path.exists(watermark_path):
+        logging.warning(<span class="string">"水印图片不存在"</span>)
+        <span class="keyword">return</span> image
+    
+    <span class="comment"># 水印配置</span>
+    opacity = config.get(<span class="string">'opacity'</span>, <span class="number">50</span>)
+    position = config.get(<span class="string">'position'</span>, <span class="string">'bottom_right'</span>)
+    margin = config.get(<span class="string">'margin'</span>, <span class="number">20</span>)
+    scale = config.get(<span class="string">'scale'</span>, <span class="number">0.2</span>)  <span class="comment"># 水印相对于原图的比例</span>
+    
+    <span class="comment"># 加载水印图片</span>
+    watermark = Image.open(watermark_path).convert(<span class="string">'RGBA'</span>)
+    
+    <span class="comment"># 调整水印尺寸</span>
+    img_width, img_height = image.size
+    wm_width = int(img_width * scale)
+    wm_height = int(watermark.size[<span class="number">1</span>] * (wm_width / watermark.size[<span class="number">0</span>]))
+    watermark = watermark.resize((wm_width, wm_height), Image.Resampling.LANCZOS)
+    
+    <span class="comment"># 设置水印透明度</span>
+    alpha = watermark.split()[<span class="number">3</span>]
+    alpha = alpha.point(<span class="keyword">lambda</span> p: p * (opacity / <span class="number">100</span>))
+    watermark.putalpha(alpha)
+    
+    <span class="comment"># 计算水印位置</span>
+    wm_width, wm_height = watermark.size
+    <span class="keyword">if</span> position == <span class="string">'top_left'</span>:
+        x, y = margin, margin
+    elif position == <span class="string">'top_right'</span>:
+        x, y = img_width - wm_width - margin, margin
+    elif position == <span class="string">'bottom_left'</span>:
+        x, y = margin, img_height - wm_height - margin
+    <span class="keyword">else</span>: <span class="comment"># bottom_right</span>
+        x, y = img_width - wm_width - margin, img_height - wm_height - margin
+    
+    <span class="comment"># 合并水印</span>
+    <span class="keyword">if</span> image.mode != <span class="string">'RGBA'</span>:
+        image = image.convert(<span class="string">'RGBA'</span>)
+    image.paste(watermark, (x, y), watermark)
+    <span class="keyword">return</span> image.convert(<span class="string">'RGB'</span>)
+
+<span class="comment"># 图片特效处理（灰度、反转等）</span>
+<span class="keyword">def</span> <span class="function">apply_image_effect</span>(image, config):
+    effect_type = config.get(<span class="string">'type'</span>, <span class="string">''</span>)
+    <span class="keyword">if</span> <span class="keyword">not</span> effect_type:
+        <span class="keyword">return</span> image
+    
+    <span class="keyword">if</span> effect_type == <span class="string">'grayscale'</span>:
+        <span class="comment"># 灰度处理</span>
+        image = image.convert(<span class="string">'L'</span>).convert(<span class="string">'RGB'</span>)
+    elif effect_type == <span class="string">'invert'</span>:
+        <span class="comment"># 颜色反转</span>
+        image = Image.eval(image, <span class="keyword">lambda</span> x: <span class="number">255</span> - x)
+    elif effect_type == <span class="string">'brightness'</span>:
+        <span class="comment"># 亮度调整</span>
+        brightness = config.get(<span class="string">'value'</span>, <span class="number">0</span>)  <span class="comment"># -100 到 100</span>
+        factor = <span class="number">1</span> + (brightness / <span class="number">100</span>)
+        image = Image.eval(image, <span class="keyword">lambda</span> x: int(min(<span class="number">255</span>, max(<span class="number">0</span>, x * factor))))
+    elif effect_type == <span class="string">'contrast'</span>:
+        <span class="comment"># 对比度调整</span>
+        contrast = config.get(<span class="string">'value'</span>, <span class="number">0</span>)  <span class="comment"># -100 到 100</span>
+        factor = <span class="number">1</span> + (contrast / <span class="number">100</span>)
+        image = Image.eval(image, <span class="keyword">lambda</span> x: int(min(<span class="number">255</span>, max(<span class="number">0</span>, (x - <span class="number">128</span>) * factor + <span class="number">128</span>))))
+    
+    <span class="keyword">return</span> image
+
+<span class="comment"># 单张图片处理</span>
+<span class="keyword">def</span> <span class="function">process_single_image</span>(input_path, output_dir, config):
+    <span class="keyword">try</span>:
+        <span class="comment"># 加载图片</span>
+        with Image.open(input_path) as img:
+            <span class="comment"># 1. 尺寸压缩</span>
+            <span class="keyword">if</span> config.get(<span class="string">'resize'</span>, {}).get(<span class="string">'enable'</span>, <span class="keyword">False</span>):
+                img = resize_image(img, config[<span class="string">'resize'</span>])
+            
+            <span class="comment"># 2. 特效处理</span>
+            <span class="keyword">if</span> config.get(<span class="string">'effect'</span>, {}).get(<span class="string">'enable'</span>, <span class="keyword">False</span>):
+                img = apply_image_effect(img, config[<span class="string">'effect'</span>])
+            
+            <span class="comment"># 3. 添加水印</span>
+            <span class="keyword">if</span> config.get(<span class="string">'watermark'</span>, {}).get(<span class="string">'enable'</span>, <span class="keyword">False</span>):
+                watermark_type = config[<span class="string">'watermark'</span>].get(<span class="string">'type'</span>, <span class="string">'text'</span>)
+                <span class="keyword">if</span> watermark_type == <span class="string">'text'</span>:
+                    img = add_text_watermark(img, config[<span class="string">'watermark'</span>])
+                <span class="keyword">else</span>:
+                    img = add_image_watermark(img, config[<span class="string">'watermark'</span>])
+            
+            <span class="comment"># 4. 格式转换与保存</span>
+            output_format = config.get(<span class="string">'output_format'</span>, <span class="string">'jpg'</span>).lower()
+            quality = config.get(<span class="string">'quality'</span>, <span class="number">85</span>)  <span class="comment"># JPG 质量 0-100</span>
+            
+            <span class="comment"># 构建输出路径（保持原文件结构）</span>
+            relative_path = os.path.relpath(os.path.dirname(input_path), config[<span class="string">'input_dir'</span>])
+            output_path = os.path.join(output_dir, relative_path)
+            os.makedirs(output_path, exist_ok=<span class="keyword">True</span>)
+            
+            <span class="comment"># 重命名（可选）</span>
+            filename = os.path.basename(input_path)
+            name, _ = os.path.splitext(filename)
+            output_filename = f<span class="string">"{name}.{output_format}"</span>
+            <span class="keyword">if</span> config.get(<span class="string">'rename_prefix'</span>, <span class="string">''</span>):
+                output_filename = f<span class="string">"{config['rename_prefix']}_{output_filename}"</span>
+            
+            final_output_path = os.path.join(output_path, output_filename)
+            
+            <span class="comment"># 保存图片</span>
+            <span class="keyword">if</span> output_format == <span class="string">'jpg'</span>:
+                img.save(final_output_path, <span class="string">'JPEG'</span>, quality=quality, optimize=<span class="keyword">True</span>)
+            elif output_format == <span class="string">'png'</span>:
+                img.save(final_output_path, <span class="string">'PNG'</span>, optimize=<span class="keyword">True</span>)
+            elif output_format == <span class="string">'gif'</span>:
+                img.save(final_output_path, <span class="string">'GIF'</span>)
+            <span class="keyword">else</span>:
+                img.save(final_output_path)
+            
+            logging.info(<span class="string">f"处理成功：{input_path} -> {final_output_path}"</span>)
+            <span class="keyword">return</span> <span class="keyword">True</span>
+    <span class="keyword">except</span> Exception <span class="keyword">as</span> e:
+        logging.error(<span class="string">f"处理失败 {input_path}：{str(e)}"</span>)
+        <span class="keyword">return</span> <span class="keyword">False</span>
+
+<span class="comment"># 批量图片处理（多线程）</span>
+<span class="keyword">def</span> <span class="function">batch_process_images</span>(config):
+    input_dir = config.get(<span class="string">'input_dir'</span>, <span class="string">'.'</span>)
+    output_dir = config.get(<span class="string">'output_dir'</span>, <span class="string">'output'</span>)
+    max_workers = config.get(<span class="string">'max_workers'</span>, <span class="number">5</span>)
+    recursive = config.get(<span class="string">'recursive'</span>, <span class="keyword">True</span>)
+    
+    <span class="comment"># 验证输入目录</span>
+    <span class="keyword">if</span> <span class="keyword">not</span> os.path.isdir(input_dir):
+        logging.error(<span class="string">f"输入目录不存在：{input_dir}"</span>)
+        <span class="keyword">return</span>
+    
+    <span class="comment"># 创建输出目录</span>
+    os.makedirs(output_dir, exist_ok=<span class="keyword">True</span>)
+    
+    <span class="comment"># 获取所有图片文件</span>
+    image_files = get_all_image_files(input_dir, recursive=recursive)
+    <span class="keyword">if</span> <span class="keyword">not</span> image_files:
+        logging.warning(<span class="string">"未找到任何图片文件"</span>)
+        <span class="keyword">return</span>
+    
+    print(<span class="string">f"找到 {len(image_files)} 张图片，开始批量处理..."</span>)
+    success_count = <span class="number">0</span>
+    fail_count = <span class="number">0</span>
+    
+    <span class="comment"># 多线程处理</span>
+    <span class="keyword">with</span> ThreadPoolExecutor(max_workers=max_workers) <span class="keyword">as</span> executor:
+        <span class="comment"># 提交所有任务</span>
+        future_to_file = {
+            executor.submit(process_single_image, file, output_dir, config): file
+            <span class="keyword">for</span> file <span class="keyword">in</span> image_files
+        }
+        
+        <span class="comment"># 处理结果</span>
+        <span class="keyword">for</span> future <span class="keyword">in</span> as_completed(future_to_file):
+            <span class="keyword">if</span> future.result():
+                success_count += <span class="number">1</span>
+            <span class="keyword">else</span>:
+                fail_count += <span class="number">1</span>
+    
+    <span class="comment"># 输出统计信息</span>
+    print(<span class="string">"\n批量处理完成！"</span>)
+    print(<span class="string">f"总数量：{len(image_files)}"</span>)
+    print(<span class="string">f"成功：{success_count}"</span>)
+    print(<span class="string">f"失败：{fail_count}"</span>)
+    print(<span class="string">f"输出目录：{os.path.abspath(output_dir)}"</span>)
+    logging.info(<span class="string">f"批量处理完成 - 成功：{success_count}，失败：{fail_count}"</span>)
+
+<span class="comment"># 主函数</span>
+<span class="keyword">def</span> <span class="function">main</span>():
+    <span class="comment"># 解析命令行参数</span>
+    parser = argparse.ArgumentParser(description=<span class="string">'图片批量处理工具'</span>)
+    parser.add_argument(<span class="string">'--config'</span>, type=str, default=<span class="string">'config.json'</span>, help=<span class="string">'配置文件路径'</span>)
+    args = parser.parse_args()
+    
+    <span class="comment"># 加载配置</span>
+    <span class="keyword">try</span>:
+        config = load_config(args.config)
+    <span class="keyword">except</span> FileNotFoundError:
+        print(<span class="string">f"配置文件未找到：{args.config}"</span>)
+        <span class="keyword">return</span>
+    <span class="keyword">except</span> json.JSONDecodeError:
+        print(<span class="string">f"配置文件格式错误：{args.config}"</span>)
+        <span class="keyword">return</span>
+    
+    <span class="comment"># 执行批量处理</span>
+    batch_process_images(config)
+
+<span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:
+    main()</code></pre>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <p>© 2025 TECH·G | 极简黑绿科技风</p>
+    </footer>
+
+    <script>
+        // 修复复制代码功能 - 支持1.5秒悬浮窗
+        function copyCode(btn) {
+            const codeElement = btn.nextElementSibling.nextElementSibling;
+            const code = codeElement.textContent;
+            
+            navigator.clipboard.writeText(code).then(() => {
+                const successMsg = btn.nextElementSibling;
+                successMsg.classList.add('show');
+                setTimeout(() => {
+                    successMsg.classList.remove('show');
+                }, 1500);
+            }).catch(err => {
+                console.error('复制失败:', err);
+                const successMsg = btn.nextElementSibling;
+                successMsg.textContent = '复制失败！';
+                successMsg.style.color = '#f87171';
+                successMsg.style.borderColor = 'rgba(248, 113, 113, 0.3)';
+                successMsg.style.background = 'rgba(248, 113, 113, 0.1)';
+                successMsg.classList.add('show');
+                setTimeout(() => {
+                    successMsg.classList.remove('show');
+                    setTimeout(() => {
+                        successMsg.textContent = '复制成功！';
+                        successMsg.style.color = '#22c55e';
+                        successMsg.style.borderColor = 'rgba(34, 197, 94, 0.3)';
+                        successMsg.style.background = 'rgba(34, 197, 94, 0.1)';
+                    }, 300);
+                }, 1500);
+            });
+        }
+    </script>
+</body>
+</html>

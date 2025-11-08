@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TECH·G | 全栈任务管理系统</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+        html, body { height: 100%; overflow-x: hidden; }
+        body { background: #000; color: #f5f5f5; position: relative; }
+        
+        /* 返回按钮 */
+        .back-container { 
+            padding: clamp(20px, 4vw, 24px) clamp(16px, 5vw, 40px); 
+            text-align: left; 
+        }
+        .back-btn { 
+            padding: clamp(6px, 1.5vw, 8px) clamp(16px, 2vw, 20px); 
+            background: rgba(249, 115, 22, 0.1); color: #f97316; 
+            text-decoration: none; border-radius: 4px; transition: all 0.3s ease; 
+            font-size: clamp(12px, 1.8vw, 14px); 
+            display: inline-block; 
+        }
+        .back-btn:hover { 
+            background: rgba(249, 115, 22, 0.2); transform: translateY(-2px); 
+        }
+        
+        /* 功能详情区域 */
+        .project-detail-section { 
+            width: 100%; padding: clamp(20px, 5vw, 40px) clamp(16px, 5vw, 40px); 
+            min-height: calc(100vh - 120px); background: #050505; 
+            max-width: 1000px; margin: 0 auto; 
+        }
+        .project-title { 
+            font-size: clamp(18px, 4vw, 24px); color: #fff; 
+            margin-bottom: clamp(20px, 4vw, 30px); position: relative; 
+            display: inline-block; 
+        }
+        .project-title::after { 
+            content: ''; display: block; width: clamp(50px, 12vw, 60px); height: 2px; 
+            background: #f97316; margin: 12px 0 0; 
+        }
+        
+        .project-meta { 
+            display: flex; flex-wrap: wrap; gap: clamp(16px, 3vw, 24px); 
+            margin-bottom: clamp(20px, 4vw, 30px); 
+        }
+        .meta-item { 
+            display: flex; flex-direction: column; 
+        }
+        .meta-label { 
+            font-size: clamp(11px, 1.5vw, 12px); color: #888; 
+            margin-bottom: 4px; 
+        }
+        .meta-value { 
+            font-size: clamp(13px, 2vw, 14px); color: #ccc; 
+        }
+        
+        .project-content { 
+            line-height: 1.8; font-size: clamp(13px, 2vw, 15px); 
+            color: #aaa; margin-bottom: clamp(20px, 4vw, 30px); 
+        }
+        .content-heading { 
+            font-size: clamp(15px, 2.5vw, 18px); color: #fff; 
+            margin: clamp(16px, 3vw, 20px) 0 clamp(8px, 1.5vw, 12px); 
+        }
+        .feature-list { 
+            padding-left: clamp(20px, 3vw, 24px); margin-bottom: clamp(16px, 3vw, 20px); 
+        }
+        .feature-list li { margin-bottom: 8px; }
+        
+        .tech-stack { 
+            display: flex; flex-wrap: wrap; gap: clamp(8px, 1.5vw, 10px); 
+            margin-bottom: clamp(20px, 4vw, 30px); 
+        }
+        .tech-tag { 
+            padding: clamp(6px, 1.5vw, 8px) clamp(12px, 2vw, 16px); 
+            border-radius: 4px; font-size: clamp(11px, 1.5vw, 12px); 
+            background: rgba(249, 115, 22, 0.1); color: #f97316; 
+        }
+        .tech-tag.web { 
+            background: rgba(59, 130, 246, 0.1); color: #3b82f6; 
+        }
+        
+        /* 示例代码按钮 */
+        .code-btn {
+            padding: clamp(8px, 2vw, 10px) clamp(20px, 3vw, 24px);
+            background: rgba(34, 197, 94, 0.1); color: #22c55e;
+            text-decoration: none; border-radius: 4px; transition: all 0.3s ease;
+            font-size: clamp(13px, 2vw, 14px);
+            display: inline-block; margin-top: clamp(10px, 2vw, 16px);
+        }
+        .code-btn:hover {
+            background: rgba(34, 197, 94, 0.2); transform: translateY(-2px);
+        }
+        
+        /* 页脚 */
+        .footer { 
+            width: 100%; padding: clamp(16px, 3vw, 20px) 0; 
+            text-align: center; color: #888; font-size: clamp(11px, 2vw, 12px); 
+            background: rgba(0, 0, 0, 0.9); border-top: 1px solid rgba(34, 197, 94, 0.1);
+        }
+        
+        /* 小屏适配 */
+        @media (max-width: 375px) {
+            .project-meta { gap: 12px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="back-container">
+        <a href="python-projects.html" class="back-btn">退出到 Python 项目合集</a>
+    </div>
+
+    <section class="project-detail-section">
+        <h1 class="project-title">全栈任务管理系统</h1>
+        
+        <div class="project-meta">
+            <div class="meta-item">
+                <span class="meta-label">项目类型</span>
+                <span class="meta-value">全栈应用</span>
+            </div>
+            <div class="meta-item">
+                <span class="meta-label">开发环境</span>
+                <span class="meta-value">Python 3.8+ / HTML/CSS/JS</span>
+            </div>
+            <div class="meta-item">
+                <span class="meta-label">适用场景</span>
+                <span class="meta-value">个人任务管理、团队协作、工作规划</span>
+            </div>
+        </div>
+        
+        <div class="project-content">
+            <p>该系统是一款前后端分离的全栈应用，前端采用 HTML/CSS/JavaScript 构建交互界面，后端基于 Python Flask 框架提供 API 服务，数据存储使用 SQLite 数据库。系统支持用户注册登录、任务全生命周期管理、优先级排序、截止日期提醒等核心功能，界面简洁直观，适配移动端和桌面端，满足个人和小型团队的任务管理需求。</p>
+            
+            <h3 class="content-heading">核心功能</h3>
+            <ul class="feature-list">
+                <li>用户系统：支持注册、登录、密码修改，基于 Session 实现身份认证</li>
+                <li>任务管理：支持任务的创建、查看、编辑、删除，实现任务全生命周期管控</li>
+                <li>任务分类：支持按状态（待办/进行中/已完成）、优先级（高/中/低）分类筛选</li>
+                <li>截止日期提醒：任务到期前自动提醒，避免遗漏重要事项</li>
+                <li>搜索功能：支持按任务标题、描述关键词搜索，快速定位目标任务</li>
+                <li>响应式界面：适配手机、平板、电脑等多种设备，随时随地管理任务</li>
+                <li>数据本地化：使用 SQLite 数据库存储数据，无需额外部署，开箱即用</li>
+            </ul>
+            
+            <h3 class="content-heading">技术亮点</h3>
+            <p>后端采用 Flask 框架构建轻量级 API，支持 RESTful 设计规范，便于前端调用；使用 SQLAlchemy 作为 ORM 工具，简化数据库操作，支持数据迁移；前端采用原生 JavaScript 实现交互逻辑，无需第三方框架，加载速度快；界面采用响应式设计，通过 CSS Flex/Grid 布局适配不同屏幕尺寸；任务提醒功能基于前端定时器和本地存储实现，无需后端服务支持；数据传输采用 JSON 格式，前后端交互高效；密码存储采用哈希加密，保障用户信息安全。</p>
+        </div>
+        
+        <div class="tech-stack">
+            <span class="tech-tag">Python</span>
+            <span class="tech-tag">Flask</span>
+            <span class="tech-tag">SQLite</span>
+            <span class="tech-tag">SQLAlchemy</span>
+            <span class="tech-tag web">HTML</span>
+            <span class="tech-tag web">CSS</span>
+            <span class="tech-tag web">JavaScript</span>
+        </div>
+        
+        <a href="python-todo-app-code.html" class="code-btn">查看示例代码</a>
+    </section>
+
+    <footer class="footer">
+        <p>© 2025 TECH·G | 极简黑绿科技风</p>
+    </footer>
+</body>
+</html>
