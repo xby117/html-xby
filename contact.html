@@ -7,15 +7,21 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', system-ui, -apple-system, sans-serif; }
         html, body { height: 100%; overflow-x: hidden; }
-        body { background: #000; color: #f5f5f5; position: relative; }
+        body { background: #000; color: #f5f5f5; position: relative; 
+            /* 给底部导航栏留空间 */
+            padding-bottom: 60px;
+            min-height: 100vh;
+        }
         
-        /* 导航栏 */
+        /* 导航栏：移到底部 */
         .navbar { 
-            position: fixed; top: 0; left: 0; width: 100%; 
+            position: fixed; 
+            bottom: 0; /* 定位到底部 */
+            left: 0; width: 100%; 
             padding: clamp(12px, 3vw, 20px) clamp(16px, 5vw, 40px); 
             z-index: 999; display: flex; justify-content: center; 
             background: rgba(0, 0, 0, 0.9); backdrop-filter: blur(12px); 
-            border-bottom: 1px solid rgba(34, 197, 94, 0.1);
+            border-top: 1px solid rgba(34, 197, 94, 0.1); /* 底部导航栏用顶边框 */
         }
         .nav-list { display: flex; list-style: none; gap: clamp(16px, 3vw, 40px); align-items: center; }
         .nav-link { 
@@ -27,12 +33,12 @@
         }
         .nav-link:hover, .nav-link.active { color: #22c55e; background: rgba(34, 197, 94, 0.1); }
         
-        /* 联系区域 */
+        /* 联系区域：移除顶部内边距，调整高度 */
         .contact-section { 
             width: 100%; padding: clamp(40px, 10vw, 80px) clamp(16px, 5vw, 40px); 
-            min-height: 100vh; background: #050505; 
+            min-height: calc(100vh - 60px); /* 减去底部导航栏高度 */
+            background: #050505; 
             display: flex; align-items: center; justify-content: center; 
-            padding-top: 100px; 
         }
         .contact-container { 
             max-width: clamp(300px, 90vw, 600px); width: 100%; 
@@ -67,25 +73,26 @@
             letter-spacing: 0.5px;
         }
         
-        /* 弹窗优化：增加显示层级和过渡效果 */
+        /* 弹窗优化 */
         .copy-toast { 
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
             background: rgba(0, 0, 0, 0.95); border: 1px solid #22c55e; 
             border-radius: 6px; padding: clamp(10px, 2vw, 12px) clamp(20px, 4vw, 24px); 
             color: #22c55e; font-size: clamp(12px, 2vw, 14px); 
-            z-index: 9999; opacity: 0; visibility: hidden; /* 修复弹窗初始可见问题 */
+            z-index: 9999; opacity: 0; visibility: hidden; 
             transition: opacity 0.3s ease, visibility 0.3s ease; 
         }
         .copy-toast.show { 
             opacity: 1; 
-            visibility: visible; /* 显示时添加可见性 */
+            visibility: visible; 
         }
         
-        /* 页脚 */
+        /* 页脚：移到导航栏上方，加底部间距 */
         .footer { 
             width: 100%; padding: clamp(16px, 3vw, 20px) 0; 
             text-align: center; color: #888; font-size: clamp(11px, 2vw, 12px); 
             background: rgba(0, 0, 0, 0.9); border-top: 1px solid rgba(34, 197, 94, 0.1);
+            margin-bottom: 60px; /* 给底部导航栏留空间 */
         }
         
         /* 小屏适配 */
@@ -99,14 +106,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <nav class="navbar">
-        <ul class="nav-list">
-            <li><a href="index.html" class="nav-link">首页</a></li>
-            <li><a href="projects.html" class="nav-link">项目</a></li>
-            <li><a href="contact.html" class="nav-link active">联系</a></li>
-        </ul>
-    </nav>
-
     <div class="copy-toast" id="copyToast">复制成功</div>
 
     <section class="contact-section">
@@ -124,20 +123,26 @@
         <p>© 2025 TECH·G | 极简黑绿科技风</p>
     </footer>
 
+    <!-- 导航栏移到页面底部 -->
+    <nav class="navbar">
+        <ul class="nav-list">
+            <li><a href="index.html" class="nav-link">首页</a></li>
+            <li><a href="projects.html" class="nav-link">项目</a></li>
+            <li><a href="contact.html" class="nav-link active">联系</a></li>
+        </ul>
+    </nav>
+
     <script>
-        // 修复核心：添加错误处理+兼容性适配+弹窗显示逻辑
         const emailCard = document.getElementById('emailCard');
         const emailAddress = document.getElementById('emailAddress');
         const copyToast = document.getElementById('copyToast');
-        const emailText = emailAddress.textContent.trim(); // 去除空格，确保复制准确
+        const emailText = emailAddress.textContent.trim();
 
         emailCard.addEventListener('click', async () => {
             try {
-                // 优先使用 Clipboard API（现代浏览器）
                 await navigator.clipboard.writeText(emailText);
                 showToast('复制成功');
             } catch (err) {
-                // 降级方案：创建临时输入框复制（兼容旧浏览器）
                 const tempInput = document.createElement('input');
                 tempInput.value = emailText;
                 document.body.appendChild(tempInput);
@@ -148,18 +153,15 @@
             }
         });
 
-        // 弹窗控制函数：避免重复触发
         function showToast(message) {
             copyToast.textContent = message;
             copyToast.classList.add('show');
-            // 清除原有定时器，防止弹窗闪烁
             clearTimeout(window.toastTimer);
             window.toastTimer = setTimeout(() => {
                 copyToast.classList.remove('show');
             }, 1500);
         }
 
-        // 可选：添加触摸反馈（移动端优化）
         emailCard.addEventListener('touchstart', () => {
             emailCard.style.transform = 'scale(0.98)';
         });
